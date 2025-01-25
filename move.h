@@ -166,18 +166,9 @@ public:
         return is;
     }
     
-    bool operator == (Move move1){
-        if(source != move1.source){
-            return false;
+    bool operator ==(const Move& move) const {
+            return source == move.source && dest == move.dest;
         }
-        
-        if(dest != move1.dest){
-            return false;
-        }
-        
-        return true;
-    }
-    
     bool operator < (const Move& move) {
         if (source.getLocation() < move.source.getLocation()) {
             return true;
@@ -192,7 +183,7 @@ public:
 
     // Operator <= to compare moves
     bool operator <= (const Move& move) {
-        if (source.getLocation() < move.source.getLocation()) {
+        if (source.getLocation() <= move.source.getLocation()) {
             return true;
         }
         if (source.getLocation() > move.source.getLocation()) {
