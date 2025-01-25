@@ -35,6 +35,7 @@ public:
     Move();
     Move(const char * s);
     string getText() const{
+        
         return text;
     }
     
@@ -108,48 +109,16 @@ public:
         error = move.error;
     }
     
-    void assign(string notation){
-        // Ensure the notation is valid
-        if (notation.length() < 4) {
-            moveType = MOVE_ERROR;
-            error = "Invalid notation: " + notation;
-            return;
-        }
+    void assignString(const char* s){
 
-        // Parse source square (first two characters)
-        source = Position(notation[0] - 'a', notation[1] - '1'); // e.g., 'e5' -> (4, 4)
-
-        // Parse destination square (next two characters)
-        dest = Position(notation[2] - 'a', notation[3] - '1'); // e.g., 'e6' -> (4, 5)
-
-        // Check for additional characters (capture, promotion, en passant, or castling)
-        if (notation.length() > 4) {
-            char lastChar = notation[4];
-
-            if (lastChar >= 'a' && lastChar <= 'z' || lastChar >= 'A' && lastChar <= 'Z') {
-                // Check for castling
-                if (lastChar == 'c') {
-                    castleK = true;
-                    moveType = CASTLE_KING;
-                } else if (lastChar == 'C') {
-                    castleQ = true;
-                    moveType = CASTLE_QUEEN;
-                }
-                // Check for en passant
-                else if (lastChar == 'E') {
-                    enpassant = true;
-                    moveType = ENPASSANT;
-                }
-                // Handle capture
-                else {
-                    capture = pieceTypeFromLetter(lastChar); // e.g., 'r' -> ROOK
-                    moveType = MOVE; // Still a normal move but includes capture
-                }
-            }
-        }
-
-        // Store the textual representation
-        text = notation;
+        Move move(s);
+        source = move.source;
+        dest = move.dest;
+        promote = move.promote;
+        capture = move.capture;
+        moveType = move.moveType;
+        isWhite = move.isWhite;
+        text = move.text;
     }
     
 
@@ -159,16 +128,17 @@ public:
         return os;
     }
     
-    friend std::istream& operator>>(std::istream& is, Move& move) {
-        std::string notation;
-        is >> notation;  // Read the move notation (e.g., "e2e4")
-        move.assign(notation);  // Assign the parsed move to the Move object
-        return is;
-    }
+//    friend std::istream& operator>>(std::istream& is, Move& move) {
+//        std::string notation;
+//        is >> notation;  // Read the move notation (e.g., "e2e4")
+//        move.assign(notation);  // Assign the parsed move to the Move object
+//        return is;
+//    }
     
     bool operator ==(const Move& move) const {
             return source == move.source && dest == move.dest;
         }
+    
     bool operator < (const Move& move) {
         if (source.getLocation() < move.source.getLocation()) {
             return true;
@@ -183,7 +153,7 @@ public:
 
     // Operator <= to compare moves
     bool operator <= (const Move& move) {
-        if (source.getLocation() <= move.source.getLocation()) {
+        if (source.getLocation() < move.source.getLocation()) {
             return true;
         }
         if (source.getLocation() > move.source.getLocation()) {
@@ -215,6 +185,15 @@ public:
             case 'n': return KNIGHT;
             case 'p': return PAWN;
             default:  return SPACE;
+        }
+    }
+    
+    MoveType getMoveType(char moveTypeChar) {
+        switch (moveTypeChar) {
+            case 'c': return CASTLE_KING;
+            case 'C': return CASTLE_QUEEN;
+            case 'E': return ENPASSANT;
+            default: return MOVE;
         }
     }
     

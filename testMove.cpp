@@ -99,7 +99,20 @@ void TestMove::read_simple()
   **************************************/
 void TestMove::read_capture()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Expected values
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::MOVE;
+    PieceType expectedPieceCapture = ROOK;
+
+    // Exercise: Create Move object from "e5e6" (e.g., a simple move from e5 to e6)
+    Move move("e5e6r");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
+    assertEquals(move.capture, expectedPieceCapture);
 }
 
  /*************************************
@@ -111,7 +124,18 @@ void TestMove::read_capture()
   **************************************/
 void TestMove::read_enpassant()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::ENPASSANT;
+    
+
+    // Exercise: Create Move object from "e5e6" (e.g., a simple move from e5 to e6)
+    Move move("e5e6E");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -123,7 +147,18 @@ void TestMove::read_enpassant()
   **************************************/
 void TestMove::read_castleKing()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::CASTLE_KING;
+    
+
+    // Exercise: Create Move object from "e5e6" (e.g., a simple move from e5 to e6)
+    Move move("e5e6c");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -135,7 +170,18 @@ void TestMove::read_castleKing()
   **************************************/
 void TestMove::read_castleQueen()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::CASTLE_QUEEN;
+    
+
+    // Exercise: Create Move object from "e5e6" (e.g., a simple move from e5 to e6)
+    Move move("e5e6C");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -147,7 +193,19 @@ void TestMove::read_castleQueen()
   **************************************/
 void TestMove::assign_simple()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Expected values
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::MOVE;  // Expecting a simple move
+
+    // Exercise: Create Move object using the "e5e6" notation
+    Move move;
+    move.assignString("e5e6");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -160,7 +218,21 @@ void TestMove::assign_simple()
   **************************************/
 void TestMove::assign_capture()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Expected values
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::MOVE;  // Expecting a simple move
+    PieceType expectedCature = ROOK;
+    
+    // Exercise: Create Move object using the "e5e6" notation
+    Move move;
+    move.assignString("e5e6r");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
+    assertEquals(move.capture, expectedCature);
 }
 
  /*************************************
@@ -172,7 +244,19 @@ void TestMove::assign_capture()
   **************************************/
 void TestMove::assign_enpassant()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Expected values
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::ENPASSANT;  // Expecting a simple move
+
+    // Exercise: Create Move object using the "e5e6" notation
+    Move move;
+    move.assignString("e5e6E");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -184,7 +268,19 @@ void TestMove::assign_enpassant()
   **************************************/
 void TestMove::assign_castleKing()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Expected values
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move:: CASTLE_KING;  // Expecting a simple move
+
+    // Exercise: Create Move object using the "e5e6" notation
+    Move move;
+    move.assignString("e5e6C");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -196,7 +292,19 @@ void TestMove::assign_castleKing()
   **************************************/
 void TestMove::assign_castleQueen()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Expected values
+    Position expectedSource("e5");  // e5 corresponds to position (4,4)
+    Position expectedDest("e6");    // e6 corresponds to position (4,5)
+    Move::MoveType expectedMoveType = Move::CASTLE_QUEEN;  // Expecting a simple move
+
+    // Exercise: Create Move object using the "e5e6" notation
+    Move move;
+    move.assignString("e5e6C");
+
+    // Verify: Ensure the source, destination, and move type are correct
+    assertEquals(move.source.getLocation(), expectedSource.getLocation());
+    assertEquals(move.dest.getLocation(), expectedDest.getLocation());
+    assertEquals(move.moveType, expectedMoveType);
 }
 
  /*************************************
@@ -208,7 +316,22 @@ void TestMove::assign_castleQueen()
   **************************************/
 void TestMove::getText_simple()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    // Setup: Create a Move object with source (4,4) and destination (4,5)
+     Position source("e5");  // source position (4,4)
+     Position dest("e6");    // destination position (4,5)
+     Move::MoveType moveType = Move::MOVE;
+
+     Move move;
+     move.source = source;
+     move.dest = dest;
+     move.moveType = moveType;
+
+     // Exercise: Retrieve the text representation of the move
+     string moveText = move.getText();
+
+     // Verify: Ensure the text is "e5e6"
+     //assertEquals(moveText, "e5e6");
+    assertUnit(NOT_YET_IMPLEMENTED);
 }
 
  /*************************************
@@ -535,82 +658,82 @@ void TestMove::pieceTypeFromLetter_king()
 }
 
 
- /*************************************
-  * EQUAL - NOT
-  * Input : b2b4 == b2b5
-  * Output: false
-  **************************************/
+/*************************************
+ * EQUAL - NOT
+ * Input : b2b4 == b2b5
+ * Output: false
+ **************************************/
 void TestMove::equal_not()
 {
-    Move move1("b2b4");
-    Move move2("b2b5");
+   Move move1("b2b4");
+   Move move2("b2b5");
 
-    bool result = (move1 == move2);
+   bool result = (move1 == move2);
 
-    assertEquals(result, false);
+   assertEquals(result, false);
 }
 
- /*************************************
-  * EQUAL - EQUALS
-  * Input : b2b4 == b2b4
-  * Output: true
-  **************************************/
+/*************************************
+ * EQUAL - EQUALS
+ * Input : b2b4 == b2b4
+ * Output: true
+ **************************************/
 void TestMove::equal_equals()
 {
-    Move move1("b2b4");
-    Move move2("b2b4");
+   Move move1("b2b4");
+   Move move2("b2b4");
 
-    bool result = (move1 == move2);
+   bool result = (move1 == move2);
 
-    assertEquals(result, true);
+   assertEquals(result, true);
 }
 
- /*************************************
-  * LESS THAN - LESS THAN
-  * Input : b2b2 < b2b4
-  * Output: false
-  *    Note that the less-than operator is needed
-  *    so std::set<T> can sort the elements. Thus,
-  *    any T in a set must define less-than. In this
-  *    case, I defined it according to the 
-  *     destination's Position's location.
-  **************************************/
+/*************************************
+ * LESS THAN - LESS THAN
+ * Input : b2b2 < b2b4
+ * Output: false
+ *    Note that the less-than operator is needed
+ *    so std::set<T> can sort the elements. Thus,
+ *    any T in a set must define less-than. In this
+ *    case, I defined it according to the
+ *     destination's Position's location.
+ **************************************/
 void TestMove::lessthan_lessthan()
 {
-    Move move1("b2b2");
-    Move move2("b2b4");
+   Move move1("b2b2");
+   Move move2("b2b4");
 
-    bool result = (move1 < move2);
+   bool result = (move1 < move2);
 
-    assertEquals(result, false);
+   assertEquals(result, false);
 }
 
- /*************************************
-  * LESS THAN - EQUALS
-  * Input : b2b4 < b2b4
-  * Output: false
-  **************************************/
+/*************************************
+ * LESS THAN - EQUALS
+ * Input : b2b4 < b2b4
+ * Output: false
+ **************************************/
 void TestMove::lessthan_equals()
 {
-    Move move1("b2b4");
-    Move move2("b2b4");
+   Move move1("b2b4");
+   Move move2("b2b4");
 
-    bool result = (move1 <= move2);
+   bool result = (move1 <= move2);
 
-    assertEquals(result, false);
+   assertEquals(result, false);
 }
 
- /*************************************
-  * LESS THAN - GREATAER THAN
-  * Input : b2b4 < b2b2
-  * Output: false
-  **************************************/
+/*************************************
+ * LESS THAN - GREATAER THAN
+ * Input : b2b4 < b2b2
+ * Output: false
+ **************************************/
 void TestMove::lessthan_greaterthan()
 {
-    Move move1("b2b4");
-    Move move2("b2b2");
+   Move move1("b2b4");
+   Move move2("b2b2");
 
-    bool result = (move1 < move2);
+   bool result = (move1 < move2);
 
-    assertEquals(result, false);
+   assertEquals(result, false);
 }

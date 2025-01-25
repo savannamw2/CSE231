@@ -23,18 +23,9 @@ Move::Move()   : source(Position()), dest(Position()), promote(SPACE), capture(S
 }
 
 
-Move::Move(const char* s) : source(Position()), dest(Position()), promote(SPACE), capture(SPACE), moveType(MOVE), isWhite(true), text("") {
-    // If the move is a castling move (ends with 'C')
-    if (s[4] == 'C') {
-        // Parse the source and destination positions
-        source = Position(s[0] - 'a', 8 - (s[1] - '0'));  // Starting position (e1)
-        dest = Position(s[2] - 'a', 8 - (s[3] - '0'));    // Ending position (c1)
-
-        
-    } else {
-        // Handle regular moves here (not castling)
-        source = Position(s[0] - 'a', 8 - (s[1] - '0'));
-        dest = Position(s[2] - 'a', 8 - (s[3] - '0'));
-        moveType = MOVE;  // Regular move
+Move::Move(const char* s) : source(Position(s)), dest(Position(s+2)), promote(SPACE), capture(SPACE), moveType(MOVE), isWhite(true), text(s) {
+    if (s[4] != '\0') {
+        moveType = getMoveType(s[4]);  // Set move type as MOVE for capture
+        capture = pieceTypeFromLetter(s[4]);  // Capture piece ('r' -> ROOK)
     }
 }
