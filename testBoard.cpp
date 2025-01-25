@@ -452,16 +452,16 @@ void TestBoard::fetch_a8()
 {  // setup
    Board board;
    PieceDummy piece;
-   Piece* pSave = board.board[0][7];
-   board.board[0][7] = &piece;
+   Piece* pSave = board.board[7][0];
    Position07 pos;
+   board.board[7][0] = &piece;
    Piece* p = nullptr;
    // exercise
    p = &(board[pos]);
    // verify
    assertUnit(p == &piece);
-   // teardown 
-   board.board[0][7] = pSave;
+   // teardown
+   board.board[7][0] = pSave;
 }
 
 void TestBoard::set_a8()
@@ -469,17 +469,17 @@ void TestBoard::set_a8()
    Board board;
    PieceDummy piece;
    piece.fWhite = true;
-   Piece* pSave = board.board[0][7];
-   board.board[0][7] = &piece;
+   Piece* pSave = board.board[7][0];
+   board.board[7][0] = &piece;
    Position07 pos;
    Piece* p = nullptr;
    // exercise
    board[pos].fWhite = false;
    // verify
    assertUnit(piece.fWhite == false);
-   assertUnit(board.board[0][7]->fWhite == false);
-   // teardown 
-   board.board[0][7] = pSave;
+   assertUnit(board.board[7][0]->fWhite == false);
+   // teardown
+   board.board[7][0] = pSave;
 }
 
 
