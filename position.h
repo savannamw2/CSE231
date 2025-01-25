@@ -83,10 +83,10 @@ public:
    
     Position(const char * s) : colRow(0x99) {
         if (s && s[0] >= 'a' && s[0] <= 'h' && s[1] >= '1' && s[1] <= '8') {
-            int c = s[0] - 'a';
-            int r = s[1] - '1';
-            colRow = (c << 4) | r;
-        }
+                    int c = s[0] - 'a'; // column 'a' -> 0, 'b' -> 1, ..., 'h' -> 7
+                    int r = s[1] - '1';  // row '1' -> 0, '2' -> 1, ..., '8' -> 7
+                    colRow = (c << 4) | r; // Pack column and row together
+                }
     }
     const Position & operator =  (const char     * rhs) {
         if (rhs && rhs[0] >= 'a' && rhs[0] <= 'h' && rhs[1] >= '1' && rhs[1] <= '8') {
