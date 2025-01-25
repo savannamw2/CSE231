@@ -32,15 +32,22 @@ public:
 
    // constructor
     Move();
-    Move(const char * s);
-    
-    void setText(const string& moveText) {text = moveText;}
-    MoveType getMoveType() const {return moveType;}
-    Position getSource() const{return source;}
-    Position getDestination() const{ return dest;}
-    bool isCapture() {return capture != SPACE;}
-    void setCapture(PieceType capturedPiece) {capture = capturedPiece;}
-    void setMoveType(MoveType type) {moveType = type;}
+    string getText();
+    Position getSrc();
+    Position getDes();
+    PieceType getPromoted();
+    PieceType getCapture();
+    bool getEnPassant();
+    bool getCastle();
+    bool getWhiteMove();
+    void setEnpassant();
+    void setCastle(bool isKing);
+    void setCastleQ();
+    void setWhiteMove();
+    void assign(Move);
+    void assign(string);
+    bool operator << (Move & rhs);
+    bool operator >> (Move & rhs);
     
     
 
@@ -69,13 +76,17 @@ private:
     }
 
 
-   Position  source;    // where the move originated from
-   Position  dest;      // where the move finished
-   PieceType promote;   // piece to be promoted to
-   PieceType capture;   // did a capture happen this move?
-   MoveType  moveType;  // what type of move is this?
-   bool      isWhite;   // whose turn is it anyway?
-   string    text;      // what is the textual version of the move?
+    Position  source;    // where the move originated from
+    Position  dest;      // where the move finished
+    PieceType promote;   // piece to be promoted to
+    PieceType capture;   // did a capture happen this move?
+    MoveType  moveType;  // what type of move is this?
+    bool      isWhite;   // whose turn is it anyway?
+    string    text;      // what is the textual version of the move?
+    bool enpassant;
+    bool castleK;
+    bool castleQ;
+    string error;
 };
 
 
