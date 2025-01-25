@@ -542,7 +542,12 @@ void TestMove::pieceTypeFromLetter_king()
   **************************************/
 void TestMove::equal_not()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Move move1("b2b4");
+    Move move2("b2b5");
+
+    bool result = (move1 == move2);
+
+    assertEquals(result, false);
 }
 
  /*************************************
@@ -552,7 +557,12 @@ void TestMove::equal_not()
   **************************************/
 void TestMove::equal_equals()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Move move1("b2b4");
+    Move move2("b2b4");
+
+    bool result = (move1 == move2);
+
+    assertEquals(result, true);
 }
 
  /*************************************
@@ -567,7 +577,12 @@ void TestMove::equal_equals()
   **************************************/
 void TestMove::lessthan_lessthan()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Move move1("b2b2");
+    Move move2("b2b4");
+
+    bool result = (move1 < move2);
+
+    assertEquals(result, false);
 }
 
  /*************************************
@@ -577,7 +592,12 @@ void TestMove::lessthan_lessthan()
   **************************************/
 void TestMove::lessthan_equals()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Move move1("b2b4");
+    Move move2("b2b4");
+
+    bool result = (move1 <= move2);
+
+    assertEquals(result, false);
 }
 
  /*************************************
@@ -587,5 +607,10 @@ void TestMove::lessthan_equals()
   **************************************/
 void TestMove::lessthan_greaterthan()
 {
-   assertUnit(NOT_YET_IMPLEMENTED);
+    Move move1("b2b4");
+    Move move2("b2b2");
+
+    bool result = (move1 < move2);
+
+    assertEquals(result, false);
 }
