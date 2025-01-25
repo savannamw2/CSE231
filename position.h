@@ -103,6 +103,11 @@ public:
         return *this;
     }
 
+    string toString() const{
+        char column = (colRow>>4) + 'a';
+        char row = (colRow & 0x0f) + '1';
+        return std::string(1,column) + std::string(1, row);
+    }
    
    // Pixels:    The Position class can work with screen coordinates,
    //            a.k.a. Pixels, these are X and Y coordinates. Note that
