@@ -46,15 +46,53 @@ public:
    virtual ~Board()   {  }
 
    // getters
-   virtual int  getCurrentMove() const { return -99;      }
-   virtual bool whiteTurn()      const { return false;  }
-   virtual void display(const Position& posHover, const Position& posSelect) const;
+    virtual int  getCurrentMove() const { return numMoves; }
+    virtual bool whiteTurn()      const { if (numMoves % 2){return false;} else return true;   }
+    virtual void display(const Position& posHover, const Position& posSelect) const
+    {
+        cout << "  +-----------------+" << endl;
+        for (int row = 7; row >= 0; --row)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                char pieceChar = ' ';
+                
+                if (board[row][col] != nullptr)
+                    pieceChar = '+';
+                if (Position(row, col) == posHover)
+                    cout << "[" << pieceChar << "]";
+                else if (Position(row, col) == posSelect)
+                    cout << "{" << pieceChar << "}";
+                else
+                    cout << " " << pieceChar << " ";
+                
+                cout << " ";
+            }
+            cout << endl;
+        }
+    }
    virtual const Piece& operator [] (const Position& pos) const;
 
    // setters
    virtual void free();
    virtual void reset(bool fFree = true);
-   virtual void move(const Move & move);
+    virtual void move(const Move & move)
+     {
+        Position source;
+        Position dest;
+
+        // Validate positions
+        if (!source.isValid() || !dest.isValid())
+            throw std::out_of_range("Invalid move positions");
+
+        // Move the piece
+        board[dest.getRow()][dest.getCol()] = board[source.getRow()][source.getCol()];
+        board[source.getRow()][source.getCol()] = nullptr;
+
+
+        // Update the move counter
+        numMoves++;
+    }
    virtual Piece& operator [] (const Position& pos);
 
 protected:
@@ -75,7 +113,12 @@ class BoardDummy : public Board
 {
    friend TestBoard;
 public:
-   BoardDummy() : Board(nullptr, true /*noreset*/)        {                }
+   BoardDummy() : Board(nullptr, true /*noreset*/)
+    { for (int row = 0; row < 8; ++row)
+       for (int col = 0; col < 8; ++col)
+           board[row][col] = nullptr;
+  numMoves = 0;
+    }   
    ~BoardDummy()                                          {                }
 
    void display(const Position& posHover,
