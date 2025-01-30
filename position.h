@@ -44,6 +44,8 @@ class Position
 {
    friend class PositionTest;
     friend class TestMove;
+    friend class TestSpace;
+    
 public:
 
    // Position :    The Position class can work with other positions,
@@ -68,7 +70,7 @@ public:
    
    // Row/Col : The position class can work with row/column,
    //           which are 0..7 and 0...7
-   Position(int c, int r) : colRow(0x99)  {           }
+    Position(int c, int r)  {  set(c, r)   ;      }
     virtual int getCol() const                     { if (isInvalid()) return -1; else return (int)((colRow & 0xf0) >> 4);}
     virtual int getRow() const                     { if (isInvalid()) return -1; else return (int)((colRow & 0x0f) >> 0);}
     void setRow(int r)                     { colRow = (colRow & 0xf0) | r;   if (isInvalid()) colRow = 0xff;}
@@ -81,22 +83,26 @@ public:
    // Text:    The Position class can work with textual coordinates,
    //          such as "d4"
    
-    Position(const char * s) : colRow(0x99) {
+    Position(const char * s) : colRow(0x00)
+    {
         if (s && s[0] >= 'a' && s[0] <= 'h' && s[1] >= '1' && s[1] <= '8') {
                     int c = s[0] - 'a'; // column 'a' -> 0, 'b' -> 1, ..., 'h' -> 7
                     int r = s[1] - '1';  // row '1' -> 0, '2' -> 1, ..., '8' -> 7
                     colRow = (c << 4) | r; // Pack column and row together
                 }
     }
-    const Position & operator =  (const char     * rhs) {
+    const Position & operator =  (const char     * rhs)
+    {
         if (rhs && rhs[0] >= 'a' && rhs[0] <= 'h' && rhs[1] >= '1' && rhs[1] <= '8') {
             int c = rhs[0] - 'a';
             int r = rhs[1] - '1';
             colRow = (c << 4) | r;       }
             return *this;
     }
-    const Position & operator =  (const string   & rhs) {
-        if (!rhs.empty() && rhs[0] >= 'a' && rhs[0] <= 'h' && rhs[1] >= '1' && rhs[1] <= '8') {
+    const Position & operator =  (const string   & rhs)
+    {
+        if (!rhs.empty() && rhs[0] >= 'a' && rhs[0] <= 'h' && rhs[1] >= '1' && rhs[1] <= '8')
+        {
             int c = rhs[0] - 'a';
             int r = rhs[1] - '1';
             colRow = (c << 4) | r;    }
@@ -165,7 +171,7 @@ public:
         adjustCol(rhs.dCol);
         return *this;
     }
-   Position operator + (const Delta & rhs) const {     Position newPos = *this;  
+   Position operator + (const Delta & rhs) const {     Position newPos = *this;
        newPos.adjustCol(rhs.dCol);
        return newPos; }
 

@@ -1,35 +1,40 @@
 /***********************************************************************
  * Header File:
- *    TEST BOARD
+ *    TEST KNIGHT
  * Author:
  *    <your name here>
  * Summary:
- *    The unit tests for Board
+ *    The unit tests for Knight
  ************************************************************************/
 
 #pragma once
 
 #include "unitTest.h"
 
-class Board;
 
 /***************************************************
- * BOARD TEST
- * Test the Board class
+ * KNIGHT TEST
+ * Test the Knight class
  ***************************************************/
-class TestBoard : public UnitTest
+class TestKnight : public UnitTest
 {
 public:
+
    void run()
    {
-      // move
-      move_knightMove();
-      move_knightAttack();
-      report("Board");
+      getMoves_blocked();
+      getMoves_capture();
+      getMoves_free();
+      getMoves_end();
+
+      getType();
+      
+      report("Knight");
    }
 private:
-   
-   void move_knightMove();
-   void move_knightAttack();
+   void getMoves_blocked();
+   void getMoves_capture();
+   void getMoves_free();
+   void getMoves_end();
+   void getType();
 };
-

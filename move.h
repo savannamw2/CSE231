@@ -1,6 +1,6 @@
 /***********************************************************************
  * Header File:
- *    MOVE 
+ *    MOVE
  * Author:
  *    <your name here>
  * Summary:
@@ -33,126 +33,89 @@ public:
 
    // constructor
     Move();
-    Move(const char * s);
-    string getText() const{
-        
-        return text;
+    Move(const Move & rhs) : promote(SPACE), capture(SPACE), isWhite(true), moveType(MOVE)
+    {
+        *this = rhs;
     }
-    
-    Position getSrc()const{
-        return source;
-    }
-    
-    Position getDes()const{
-        return dest;
-    }
-    
-    PieceType getPromoted() const{
-        return promote;
-    }
-    
-    PieceType getCapture()const{
-        return capture;
-    }
-    
-    bool getEnPassant()const{
-        return enpassant;
-    }
-    
-    bool getCastleK()const{
-        return castleK;
-    }
-    
-    bool getCastleQ()const{
-        return castleQ;
-    }
-    
-    bool getWhiteMove()const{
-        return isWhite;
-    }
-    
-    void setEnpassant(){
-        enpassant = true;
-        moveType = ENPASSANT;
-    }
-    
-    void setCastle(bool isKing){
-        if(isKing){
-            castleK = true;
-            moveType = CASTLE_KING;
-        }else{
-            castleQ = true;
-            moveType = CASTLE_QUEEN;
-        }
-    }
-    
-    void setCastleQ(){
-        castleQ = true;
-        moveType = CASTLE_QUEEN;
-    }
-    
-    void setWhiteMove(){
-        isWhite = !isWhite;
-    }
-    
-    void assign(Move move){
-        source = move.source;
-        dest = move.dest;
-        promote = move.promote;
-        capture = move.capture;
-        moveType = move.moveType;
-        isWhite = move.isWhite;
-        text = move.text;
-        enpassant = move.enpassant;
-        castleK = move.castleK;
-        castleQ = move.castleQ;
-        error = move.error;
-    }
-    
-    void assignString(const char* s){
 
-        Move move(s);
-        source = move.source;
-        dest = move.dest;
-        promote = move.promote;
-        capture = move.capture;
-        moveType = move.moveType;
-        isWhite = move.isWhite;
-        text = move.text;
+    Move(const char* s, bool isW = true)  : promote(SPACE), capture(SPACE), isWhite(isW), moveType(MOVE)
+    {
+        *this = s;
     }
     
+    string getText() const {return text;}
+    
+    Position getSrc()const          {return source;}
+    Position getDes()const          {return dest;}
+    
+    PieceType getPromoted() const   {return promote;}
+    PieceType getCapture()const     {return capture;}
+    
+    bool getEnPassant()const        {return moveType== ENPASSANT;}
+    bool getCastleK()const          {return moveType == CASTLE_KING;}
+    bool getCastleQ()const          {return moveType == CASTLE_QUEEN;}
+    bool getWhiteMove()const        {return isWhite;}
+    Move :: MoveType getMoveType() const {return moveType; }
+    
+    bool operator == (const Move & rhs ) const
+    {
+        return source == rhs.source && dest == rhs.dest &&
+                promote == rhs.promote && capture == rhs.capture &&
+                moveType == rhs.moveType && isWhite == rhs.isWhite &&
+                text == rhs.text;
+    };
+    bool operator == (const string & rhs ) const {return getText() == rhs;}
+    bool operator != (const string & rhs ) const {return getText() != rhs;}
+    bool operator != (const Move & rhs ) const {return !(*this == rhs);}
+    bool operator < (const Move & rhs ) const {
+        return dest.getLocation() < rhs.dest.getLocation();
+    };
 
-    friend std:: ostream& operator <<(std::ostream& os, const Move& move) {
-        os << "Source: (" << move.getSrc() << ", " << move.getSrc() << ")"
-        << ", Dest: (" << move.getDes() << ", " << move.getDes() << ")";
-        return os;
-    }
+    void update() {text = getText();}
+    void setCapture(PieceType pt) {capture = pt; update();}
+    void setWhiteMove(bool f) {isWhite = f; update(); }
+    void setSRC(const Position & src) {source = src; update(); }
+    void setDes(const Position & des) {dest = des; update(); }
+    void setEnpassant(){moveType = ENPASSANT; update(); }
+    void setPromote(PieceType pt) {promote = pt; update(); }
+    void setCastle(bool isKing){ moveType = (isKing ? CASTLE_KING : CASTLE_QUEEN); update();}
     
-//    friend std::istream& operator>>(std::istream& is, Move& move) {
-//        std::string notation;
-//        is >> notation;  // Read the move notation (e.g., "e2e4")
-//        move.assign(notation);  // Assign the parsed move to the Move object
-//        return is;
-//    }
-    
-    bool operator ==(const Move& move) const {
-            return source == move.source && dest == move.dest;
-        }
-    
-    bool operator < (const Move& move) {
-        if (source.getLocation() < move.source.getLocation()) {
-            return true;
-        }
-        if (source.getLocation() > move.source.getLocation()) {
-            return false;
-        }
+    friend ostream & operator << (ostream & out , Move & rhs);
 
-        // If sources are the same, compare destinations
-        return dest.getLocation() < move.dest.getLocation();
+    friend ostream& operator <<(ostream& out, Move& move);
+    friend iostream& operator >>(iostream & in, Move& move);
+    
+    const Move operator = (const Move& rhs)
+    {
+        if (this != &rhs) // Check for self-assignment
+            {
+                source = rhs.source;
+                dest = rhs.dest;
+                promote = rhs.promote;
+                capture = rhs.capture;
+                moveType = rhs.moveType;
+                isWhite = rhs.isWhite;
+                text = rhs.text;
+            }
+            return *this;
+    };
+    
+    const Move operator = (const string & s)
+    {
+        read(s);
+        return *this;
     }
+    
+    const Move operator =(const char * s)
+    {
+        read(string(s));
+        return *this;
+    }
+    
 
     // Operator <= to compare moves
-    bool operator <= (const Move& move) {
+    bool operator <= (const Move& move)
+    {
         if (source.getLocation() < move.source.getLocation()) {
             return true;
         }
@@ -165,39 +128,39 @@ public:
     }
     
     
-    char letterFromPieceType(PieceType pt)     const {
-        switch (pt) {
-            case KING:    return 'k';
-            case QUEEN:   return 'q';
-            case ROOK:    return 'r';
-            case BISHOP:  return 'b';
-            case KNIGHT:  return 'n';
-            case PAWN:    return 'p';
-            default:      return ' ';
+
+    char letterFromPieceType(PieceType piece) const
+    {
+        switch (piece)
+        {
+            case KING:   return 'K';
+            case QUEEN:  return 'Q';
+            case ROOK:   return 'R';
+            case BISHOP: return 'B';
+            case KNIGHT: return 'N';
+            case PAWN:   return 'P';
+            case SPACE:  return ' ';  // This handles the SPACE case
+            default:     return '?';  // For invalid types
         }
     }
-    PieceType pieceTypeFromLetter(char letter) const {
-        switch (letter) {
+    
+    PieceType pieceTypeFromLetter(char letter) const
+    {
+        switch (tolower(letter)) // Convert to lowercase for uniformity
+        {
             case 'k': return KING;
             case 'q': return QUEEN;
             case 'r': return ROOK;
             case 'b': return BISHOP;
             case 'n': return KNIGHT;
             case 'p': return PAWN;
-            default:  return SPACE;
-        }
-    }
-    
-    MoveType getMoveType(char moveTypeChar) {
-        switch (moveTypeChar) {
-            case 'c': return CASTLE_KING;
-            case 'C': return CASTLE_QUEEN;
-            case 'E': return ENPASSANT;
-            default: return MOVE;
+            case ' ': return SPACE;  // Handles space character
+            default:  return INVALID; // Invalid input case
         }
     }
     
 private:
+    void read(const std::string & s);
 
     Position  source;    // where the move originated from
     Position  dest;      // where the move finished
@@ -206,11 +169,4 @@ private:
     MoveType  moveType;  // what type of move is this?
     bool      isWhite;   // whose turn is it anyway?
     string    text;      // what is the textual version of the move?
-    bool enpassant;
-    bool castleK;
-    bool castleQ;
-    string error;
 };
-
-
-

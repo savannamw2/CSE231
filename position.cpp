@@ -24,7 +24,7 @@ ostream & operator << (ostream & out, const Position & rhs)
  **************************************/
 istream & operator >> (istream & in,  Position & rhs)
 {
-   return in;   
+   return in;
 }
 /* Contrstuctor rhs*/
 Position :: Position(const Position & rhs)
