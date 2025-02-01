@@ -13,6 +13,7 @@
 #include <iostream>
 #include "position.h"  // Every move has two Positions as attributes
 #include "pieceType.h" // A piece type
+#include <set>
 
 
 class TestMove;
@@ -43,6 +44,10 @@ public:
         *this = s;
     }
     
+    Move(const Position& source, const Position& dest, const std::set<Move> & possible);
+    Move(const Position& source, const Position& dest, PieceType promote, PieceType capture, MoveType moveType, bool isWhite);
+
+    
     string getText() const {return text;}
     
     Position getSrc()const          {return source;}
@@ -68,6 +73,7 @@ public:
     bool operator != (const string & rhs ) const {return getText() != rhs;}
     bool operator != (const Move & rhs ) const {return !(*this == rhs);}
     bool operator < (const Move & rhs ) const {
+        std::cout << "Comparing " << dest.getLocation() << " < " << rhs.dest.getLocation() << std::endl;
         return dest.getLocation() < rhs.dest.getLocation();
     };
 
@@ -81,7 +87,6 @@ public:
     void setCastle(bool isKing){ moveType = (isKing ? CASTLE_KING : CASTLE_QUEEN); update();}
     
     friend ostream & operator << (ostream & out , Move & rhs);
-
     friend ostream& operator <<(ostream& out, Move& move);
     friend iostream& operator >>(iostream & in, Move& move);
     

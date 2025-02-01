@@ -1,17 +1,17 @@
 /***********************************************************************
  * Header File:
- *    BOARD 
+ *    BOARD
  * Author:
- *    <your name here>
+ *    Savanna & Isabel
  * Summary:
- *    A collection of pieces and a small amount of game state
+ *    A collection of pieces and the state of the board
  ************************************************************************/
 
 #pragma once
 
-#include <stack>
-#include <cassert>
 #include "move.h"   // Because we return a set of Move
+#include <cassert>
+#include <set>
 
 class ogstream;
 class TestPawn;
@@ -39,64 +39,27 @@ class Board
    friend TestQueen;
    friend TestKing;
    friend TestBoard;
-public:
 
+public:
+   // constructor and destuctor
    // create and destroy the board
    Board(ogstream* pgout = nullptr, bool noreset = false);
-   virtual ~Board()   {  }
+   virtual ~Board() { free(); }
 
    // getters
-    virtual int  getCurrentMove() const { return numMoves; }
-    virtual bool whiteTurn()      const { if (numMoves % 2){return false;} else return true;   }
-    virtual void display(const Position& posHover, const Position& posSelect) const
-    {
-        cout << "  +-----------------+" << endl;
-        for (int row = 7; row >= 0; --row)
-        {
-            for (int col = 0; col < 8; col++)
-            {
-                char pieceChar = ' ';
-                
-                if (board[row][col] != nullptr)
-                    pieceChar = '+';
-                if (Position(row, col) == posHover)
-                    cout << "[" << pieceChar << "]";
-                else if (Position(row, col) == posSelect)
-                    cout << "{" << pieceChar << "}";
-                else
-                    cout << " " << pieceChar << " ";
-                
-                cout << " ";
-            }
-            cout << endl;
-        }
-    }
+   virtual int  getCurrentMove() const { return numMoves; }
+   virtual bool whiteTurn()      const { return numMoves % 2 == 0; }
+   virtual void display(const Position& posHover, const Position& posSelect, const std::set<Move>& possible) const;
    virtual const Piece& operator [] (const Position& pos) const;
 
    // setters
    virtual void free();
    virtual void reset(bool fFree = true);
-    virtual void move(const Move & move)
-     {
-        Position source;
-        Position dest;
-
-        // Validate positions
-        if (!source.isValid() || !dest.isValid())
-            throw std::out_of_range("Invalid move positions");
-
-        // Move the piece
-        board[dest.getRow()][dest.getCol()] = board[source.getRow()][source.getCol()];
-        board[source.getRow()][source.getCol()] = nullptr;
-
-
-        // Update the move counter
-        numMoves++;
-    }
+   virtual void move(const Move& move);
    virtual Piece& operator [] (const Position& pos);
 
 protected:
-   void  assertBoard();
+   void assertBoard();
 
    Piece * board[8][8];    // the board of chess pieces
    int numMoves;
@@ -107,18 +70,13 @@ protected:
 
 /***************************************************
  * BOARD DUMMY BOARD
- * A board double that does nothing but assert
+ * A board double that does nothing but assert. Will need this for unit tests.
  **************************************************/
 class BoardDummy : public Board
 {
    friend TestBoard;
 public:
-   BoardDummy() : Board(nullptr, true /*noreset*/)
-    { for (int row = 0; row < 8; ++row)
-       for (int col = 0; col < 8; ++col)
-           board[row][col] = nullptr;
-  numMoves = 0;
-    }   
+   BoardDummy() : Board(nullptr, true /*noreset*/)        {                }
    ~BoardDummy()                                          {                }
 
    void display(const Position& posHover,
@@ -130,13 +88,13 @@ public:
    bool whiteTurn()      const                            { assert(false); return false; }
    void free()                                            { assert(false); }
    Piece& operator [] (const Position& pos)
-   { 
-      assert(false); 
+   {
+      assert(false);
       throw true;
    }
-   const Piece& operator [] (const Position& pos) const 
-   { 
-      assert(false); 
+   const Piece& operator [] (const Position& pos) const
+   {
+      assert(false);
       throw true;
    }
 };
@@ -152,7 +110,6 @@ class BoardEmpty : public BoardDummy
    friend TestBoard;
 public:
    Piece * pSpace;
-   int moveNumber;
 
    BoardEmpty();
    ~BoardEmpty();
@@ -164,6 +121,7 @@ public:
       else
          return *pSpace;
    }
-   int  getCurrentMove() const { return moveNumber; }
+   int getCurrentMove() const {
+      return numMoves;
+   }
 };
-

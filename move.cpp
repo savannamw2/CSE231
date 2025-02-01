@@ -19,8 +19,43 @@ using namespace std;
  * MOVE : DEFAULT CONSTRUCTOR
  ***************************************************/
 Move::Move()
-: source(INVALID), dest(INVALID), promote(SPACE), capture(SPACE), moveType(MOVE), isWhite(true), text("") {}
+: source(), dest(), promote(SPACE), capture(SPACE), moveType(MOVE), isWhite(true), text("") {}
 
+Move::Move(const Position& source, const Position& dest, PieceType promote, PieceType capture, MoveType moveType, bool isWhite)
+{
+   this->source = source;
+   this->dest = dest;
+   this->promote = promote;
+   this->capture = capture;
+   this->moveType = moveType;
+   this->isWhite = isWhite;
+   this->text = getText();
+}
+
+Move::Move(const Position& source, const Position& dest, const set<Move>& possible)
+{
+   bool matched = false;
+   for (const Move& move : possible)
+   {
+       if (getSrc() == source && getDes() == dest)
+      {
+          this->source = source;
+          this->dest = dest;
+          this->isWhite = move.getWhiteMove();
+          this->promote = move.getPromoted();
+          this->capture = move.getCapture();
+          this->moveType = move.getMoveType();
+          this->text = move.getText();
+         matched = true;
+      }
+   }
+
+   if (!matched)
+   {
+      Move();
+   }
+
+}
 
 void Move::read(const string & s)
 {

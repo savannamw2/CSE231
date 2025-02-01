@@ -75,8 +75,18 @@ public:
     virtual int getRow() const                     { if (isInvalid()) return -1; else return (int)((colRow & 0x0f) >> 0);}
     void setRow(int r)                     { colRow = (colRow & 0xf0) | r;   if (isInvalid()) colRow = 0xff;}
     void setCol(int c)                     { colRow = (colRow & 0x0f) | (c << 4); if (isInvalid()) colRow = 0xff;        }
-    void set(int c, int r)                 { if (c < 0 || c >= 8) { colRow = 0xff; return;} if (r < 0 || r >= 8)
-                                                {colRow = 0x3f; return;} colRow = (c << 4) | r;}
+    void set(int c, int r)
+    {
+        if (c < 0 || c >= 8) {
+            colRow = 0xff;
+            return;
+        }
+        if (r < 0 || r >= 8) {
+            colRow = 0x3f;
+            return;
+        }
+        colRow = (c << 4) | r;
+    }
     /* {  colRow = (colRow & 0xf0) | r; if (isInvalid()) colRow = 0xff;
      colRow = (colRow & 0x0f)| (c << 4); if (isInvalid()) colRow = 0x3f;   }*/
 
