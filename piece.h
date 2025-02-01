@@ -2,7 +2,7 @@
  * Header File:
  *    PIECE
  * Author:
-*    Nathan Bird, Jared Davey, Brock Hoskins
+*    <your name here>
  * Summary:
  *    The Piece base class and all the derived classes:
  *       SPACE, KING, QUEEN, ROOK, KNIGHT, BISHOP, PAWN
@@ -10,11 +10,12 @@
 
 #pragma once
 
+#include <set>         // for SET to return a set of possible moves
+#include <list>        // for the move-type,list
+#include <cassert>
+#include "position.h"  // Because Position is a member variable
 #include "move.h"      // Because we return a set of Move
 #include "pieceType.h" // A piece type.
-#include "position.h"  // Because Position is a member variable
-#include <cassert>
-#include <set>         // for SET to return a set of possible moves
 using std::set;
 
 // forward declaration because one of the Piece methods takes a Board
@@ -53,7 +54,7 @@ public:
    Piece(const Position& pos, bool isWhite = true) : position(pos), fWhite(isWhite), nMoves(0), lastMove(0) {}
    Piece(int c, int r, bool isWhite = true) : position(Position(c, r)), fWhite(isWhite), nMoves(0), lastMove(0) {}
    Piece(const Piece& piece);
-   virtual ~Piece() {}
+   virtual ~Piece()                                   {}
    virtual const Piece& operator = (const Piece& rhs);
 
    // getters
@@ -62,24 +63,18 @@ public:
    virtual bool isWhite()                  const { return fWhite;       }
    virtual bool isMoved()                  const { return nMoves != 0;  }
    virtual int  getNMoves()                const { return nMoves;       }
-   virtual int  getLastMove()              const { return lastMove;     }
    virtual void decrementNMoves()                { nMoves--;            }
    virtual void incrementNMoves()                { nMoves++;            }
    virtual const Position & getPosition()  const { return position;     }
    virtual bool justMoved(int currentMove) const { return lastMove == currentMove - 1; }
 
-   virtual Move createNewMove(const Position& newPos, const Board& board) const;
-
    // setter
    virtual void setLastMove(int currentMove);
-   virtual void setPosition(const Position& newPos) { position.set(newPos.getCol(), newPos.getRow()); }
 
    // overwritten by the various pieces
-   virtual PieceType getType()            const = 0;
-   virtual void display(ogstream * pgout) const = 0;
-   //virtual void getMovesSlide(set <Move>& moves, const Board& board)   const;
-   //virtual void getMovesNoSlide(set <Move>& moves, const Board& board) const;
-   virtual void getMoves(set <Move> & moves, const Board & board)      const;
+   virtual PieceType getType()                                    const = 0;
+   virtual void display(ogstream * pgout)                         const = 0;
+   virtual void getMoves(set <Move> & moves, const Board & board) const;
 
 protected:
 
@@ -100,9 +95,9 @@ class PieceDerived : public Piece
 public:
    PieceDerived(const Position& pos, bool isWhite) : Piece(9, 9) { }
    PieceDerived(int c, int r, bool isWhite) : Piece(9, 9)        { }
-   ~PieceDerived()                                               { }
-   PieceType getType()            const     { return SPACE;        }
-   void display(ogstream* pgout)  const     { assert(false);       }
+   ~PieceDerived()                                                       { }
+   PieceType getType()            const     { return SPACE;                }
+   void display(ogstream* pgout)  const     { assert(false);               }
 };
 
 
@@ -133,17 +128,17 @@ public:
    }
 
    // getters
-   bool operator == (char letter)  const { assert(false); return true;     }
-   bool operator != (char letter)  const { assert(false); return true;     }
-   bool isWhite()                  const { assert(false); return true;     }
-   bool isMoved()                  const { assert(false); return true;     }
-   int  getNMoves()                const { assert(false); return 0;        }
-   void decrementNMoves()                { assert(false);                  }
+   bool operator == (char letter)  const { assert(false); return true;  }
+   bool operator != (char letter)  const { assert(false); return true;  }
+   bool isWhite()                  const { assert(false); return true;  }
+   bool isMoved()                  const { assert(false); return true;  }
+   int  getNMoves()                const { assert(false); return 0;     }
+   void decrementNMoves()                { assert(false);               }
    const Position & getPosition()  const { assert(false); return position; }
-   bool justMoved(int currentMove) const { assert(false); return true;     }
+   bool justMoved(int currentMove) const { assert(false); return true;  }
 
    // setter
-   void setLastMove(int currentMove)     { assert(false); }
+   void setLastMove(int currentMove)     { assert(false);               }
 
    // overwritten by the various pieces
    PieceType getType()             const { assert(false); return SPACE; }
@@ -218,76 +213,13 @@ public:
    void getMoves(set <Move>& moves, const Board& board) const { }
 };
 
-/***************************************************
- * WHITE PIECE NOT MOVED
- * Generic piece whose only allowable property is the color
- * and the number of moves, which is 0
- **************************************************/
-class WhiteNotMoved : public PieceDummy
-{
-   PieceType pt;
-public:
-   WhiteNotMoved() : PieceDummy(), pt(ROOK) {}
-   WhiteNotMoved(PieceType pt) : PieceDummy(), pt(pt) {}
-   bool isWhite() const {
-      return true;
-   }
-   PieceType getType() const {
-      return pt;
-   }
-   int getNMoves() const { return 0; }
-   void getMoves(set <Move>& moves, const Board& board) const { }
-};
-
 class Black : public PieceDummy
 {
    PieceType pt;
-   bool fWhite;
 public:
-   Black() : PieceDummy(), pt(ROOK), fWhite(false) {}
-   Black(PieceType pt) : PieceDummy(), pt(pt), fWhite(false) {}
+   Black() : PieceDummy(), pt(ROOK) {}
+   Black(PieceType pt) : PieceDummy(), pt(pt) {}
    bool isWhite() const { return false; }
    PieceType getType() const { return pt; }
    void getMoves(set <Move>& moves, const Board& board) const { }
-};
-
-class BlackNotMoved : public PieceDummy
-{
-   PieceType pt;
-public:
-   BlackNotMoved() : PieceDummy(), pt(ROOK) {}
-   BlackNotMoved(PieceType pt) : PieceDummy(), pt(pt) {}
-   bool isWhite() const { return false; }
-   PieceType getType() const { return pt; }
-   int getNMoves() const { return 0; }
-   void getMoves(set <Move>& moves, const Board& board) const { }
-};
-
-class WhiteMoved : public PieceDummy
-{
-   PieceType pt;
-public:
-   WhiteMoved() : PieceDummy(), pt(ROOK) {}
-   WhiteMoved(PieceType pt) : PieceDummy(), pt(pt) {}
-   bool isWhite() const { return true; }
-   PieceType getType() const { return pt; }
-   int getNMoves() const { return 1; }
-   void getMoves(set <Move>& moves, const Board& board) const { }
-};
-
-class BlackMoved : public PieceDummy
-{
-   PieceType pt;
-public:
-   BlackMoved() : PieceDummy(), pt(ROOK) {}
-   BlackMoved(PieceType pt) : PieceDummy(), pt(pt) {}
-   bool isWhite() const { return false; }
-   PieceType getType() const { return pt; }
-   int getNMoves() const { return 1; }
-   void getMoves(set <Move>& moves, const Board& board) const { }
-};
-
-struct RelativePos {
-   int col;
-   int row;
 };

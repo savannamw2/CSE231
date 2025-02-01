@@ -1,57 +1,53 @@
 /***********************************************************************
  * Source File:
- *    BOARD
+ *    BOARD 
  * Author:
- *    Isabel &N Savnna
+ *    Savanna & Isabel
  * Summary:
- *    A collection of pieces and the state of the board
+ *    A collection of pieces and a small amount of game state
  ************************************************************************/
 
 #include "board.h"
-#include "move.h"
-#include "piece.h"
-#include "pieceKnight.h"
-#include "pieceSpace.h"
-#include "position.h"
 #include "uiDraw.h"
-#include <set>
+#include "position.h"
+#include "piece.h"
+#include "pieceSpace.h"
+#include "pieceKnight.h"
 #include <cassert>
 using namespace std;
 
 
 /***********************************************
  * BOARD : RESET
- *         Fill the board with starting pieces
+ *         Just fill the board with the known pieces
  *   +---a-b-c-d-e-f-g-h---+
  *   |                     |
- *   8   R N B Q K B N R   8
- *   7   P P P P P P P P   7
+ *   8     N         N     8
+ *   7                     7
  *   6                     6
  *   5                     5
  *   4                     4
  *   3                     3
- *   2   p p p p p p p p   2
- *   1   r n b q k b n r   1
+ *   2                     2
+ *   1     n         n     1
  *   |                     |
  *   +---a-b-c-d-e-f-g-h---+
  ***********************************************/
 void Board::reset(bool fFree)
 {
    // free everything
-   if (fFree)
-      free();
-
-
-   board[1][0] = new Knight(1, 0, true);
-   board[6][0] = new Knight(6, 0, true);
-   board[1][7] = new Knight(1, 7, false);
-   board[6][7] = new Knight(6, 7, false);
-
-   
-   for (int r = 2; r < 6; r++)
+   for (int r = 0; r < 8; r++)
       for (int c = 0; c < 8; c++)
-         board[c][r] = new Space(c, r);
+         board[c][r] = nullptr;
+   board[1][0] = new Knight(1, 0, false);
+   board[6][0] = new Knight(6, 0, false);
+   board[1][7] = new Knight(1, 7, true);
+   board[6][7] = new Knight(6, 7, true);
 }
+
+
+// we really REALLY need to delete this.
+Space space(0,0);
 
 /***********************************************
 * BOARD : GET
@@ -59,42 +55,45 @@ void Board::reset(bool fFree)
 ***********************************************/
 const Piece& Board::operator [] (const Position& pos) const
 {
-   return *(board[pos.getRow()][pos.getCol()]);
+   return *(board[pos.getCol()][pos.getRow()]);
 }
 
 Piece& Board::operator [] (const Position& pos)
 {
-   return *(board[pos.getRow()][pos.getCol()]);
+   return *(board[pos.getCol()][pos.getRow()]);
 }
 
 
-/***********************************************
-* BOARD : DISPLAY
-*         Display the board
-***********************************************/
-void Board::display(const Position& posHover, const Position& posSelect, const set<Move>& possible) const
+
+ /***********************************************
+ * BOARD : DISPLAY
+ *         Display the board
+ ***********************************************/
+void Board::display(const Position & posHover, const Position & posSelect) const
 {
-   ogstream gout;
-
-   // draw the checkerboard
-   pgout->drawBoard();
-
-   // draw any selections
-   pgout->drawHover(posHover);
-   pgout->drawSelected(posSelect);
-
-   // draw the possible moves
-   set <Move> ::iterator it;
-   for (it = possible.begin(); it != possible.end(); ++it)
-      gout.drawPossible(it->getDes());
-
-   // draw the pieces
-   for (const auto& row : board)
-      for (const auto& piece : row)
-         if (piece != nullptr)
-            piece->display(pgout);
-
+    pgout->drawBoard();
+    
+    
+    // draw any selections
+    pgout->drawHover(posHover);
+    pgout->drawSelected(posSelect);
+    
+    
+    // draw the pieces
+    for (const auto& row : board)
+    {
+        for (const auto& piece : row)
+        {
+            if (piece != nullptr)
+            {
+                piece->display(pgout);
+            }
+        }
+        
+    }
 }
+   
+
 
 /************************************************
  * BOARD : CONSTRUCT
@@ -102,10 +101,14 @@ void Board::display(const Position& posHover, const Position& posSelect, const s
  ************************************************/
 Board::Board(ogstream* pgout, bool noreset) : pgout(pgout), numMoves(0)
 {
-   free();
-   if (!noreset)
-      reset();
+    for (int col = 0; col < 8; col++)
+       {
+          for (int row = 0; row < 8; row++)
+             board[col][row] = nullptr;
+       }
+
 }
+
 
 /************************************************
  * BOARD : FREE
@@ -113,14 +116,17 @@ Board::Board(ogstream* pgout, bool noreset) : pgout(pgout), numMoves(0)
  ************************************************/
 void Board::free()
 {
-   for (int col = 0; col < 8; col++)
-   {
-      for (int row = 0; row < 8; row++)
-      {
-         board[col][row] = nullptr;
-      }
-   }
+    for (int col = 0; col < 8; col++)
+       {
+          for (int row = 0; row < 8; row++)
+          {
+             delete board[col][row];
+             board[col][row] = nullptr;
+          }
+       }
+
 }
+
 
 /**********************************************
  * BOARD : ASSERT BOARD
@@ -131,26 +137,33 @@ void Board::assertBoard()
 
 }
 
+
+
+
 /**********************************************
  * BOARD : MOVE
  *         Execute a move according to the contained instructions
  *   INPUT move The instructions of the move
  *********************************************/
-void Board::move(const Move& move)
+void Board::move(const Move & move)
 {
-   numMoves++;
+    numMoves++;
 
     Position source = move.getSrc();
-   Position dest = move.getDes();
+    Position dest = move.getDes();
+    
+    (*this)[source].setLastMove(getCurrentMove());
+    
+    if (move.getCapture() != SPACE)
+    {
+        board[dest.getCol()][dest.getRow()] = new Space(dest.getCol(), dest.getRow());
+    }
 
-   (*this)[source].setLastMove(getCurrentMove());
-
-
-   // change source piece position
-   std::swap(board[source.getCol()][source.getRow()], board[dest.getCol()][dest.getRow()]);
-   board[dest.getCol()][dest.getRow()]->setPosition(dest);
+    std::swap(board[source.getCol()][source.getRow()], board[dest.getCol()][dest.getRow()]);
 
 }
+
+
 
 /**********************************************
  * BOARD EMPTY
@@ -158,7 +171,7 @@ void Board::move(const Move& move)
  * It does not even have spaces though each non-filled
  * spot will report it has a space. This is for unit testing
  *********************************************/
-BoardEmpty::BoardEmpty() : BoardDummy(), pSpace(nullptr)
+BoardEmpty::BoardEmpty() : BoardDummy(), pSpace(nullptr), numMoves(0)
 {
    pSpace = new Space(0, 0);
 }

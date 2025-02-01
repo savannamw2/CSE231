@@ -17,7 +17,7 @@
  ***************************************************/
 void Knight::display(ogstream* pgout) const
 {
-
+    pgout->drawKnight(position, fWhite);
 }
 
 
@@ -53,6 +53,6 @@ void Knight::getMoves(set <Move>& moves, const Board& board) const
 
           if (0 <= r && r <= 7 && 0 <= c && c <= 7)
              if (board[newPos].getType() == SPACE || (fWhite != board[newPos].isWhite()))
-                 moves.insert(createNewMove(newPos, board));
+                 moves.insert(Move(position, Position(c, r), PieceType::INVALID, board[Position(c, r)].getType(), Move::MoveType::MOVE, isWhite()));
        }
 }
