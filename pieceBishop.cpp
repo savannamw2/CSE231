@@ -24,6 +24,9 @@ void Bishop::display(ogstream* pgout) const
 
 void Bishop::getMoves(set <Move>& moves, const Board& board) const
 {
+    int row = position.getRow();
+    int col = position.getCol();
+    
     Relative possible [4] =
     {
         {1,  1},
@@ -37,16 +40,19 @@ void Bishop::getMoves(set <Move>& moves, const Board& board) const
     int c;
     for (int i = 0; i < 4; i++)
     {
-        r = position.getRow() + possible[i].row;
-        c = position.getCol() + possible[i].col;
+        r = row + possible[i].row;
+        c = col + possible[i].col;
         Position newPos(c, r);
-        while (r >= 0 && r <= 7 && c >= 0 && c <= 7 && board[newPos].getType() == PieceType::SPACE)
+
+        while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[newPos].getType() == PieceType::SPACE)
         {
-            moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
-            newPos.set(position.getCol() + possible[i].col, position.getRow() + possible[i].row);
+           moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+            r += possible[i].row;
+            c += possible[i].col;
+           newPos = Position(c, r);
         }
         
-        if (newPos.isValid() && this -> isWhite() != board[newPos].isWhite())
+        if (newPos.isValid() && this-> isWhite() != board[newPos].isWhite())
         {
             moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
         }
