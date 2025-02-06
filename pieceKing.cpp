@@ -7,7 +7,7 @@
  
  **/
 
-#include "pieceBishop.h"
+#include "pieceKing.h"
 #include "board.h"
 #include "uiDraw.h"
 
@@ -15,27 +15,31 @@
 * PIECE DRAW
 * Draw all the pieces.
 ***************************************************/
-void Bishop::display(ogstream* pgout) const
+void King::display(ogstream* pgout) const
 {
-  pgout->drawBishop(position, fWhite);
+  pgout->drawKing(position, fWhite);
 }
 
 
 
-void Bishop::getMoves(set <Move>& moves, const Board& board) const
+void King::getMoves(set <Move>& moves, const Board& board) const
 {
-    Relative possible [4] =
+    Relative possible [8] =
     {
-        {1,  1},
+        {1,     1},
         {-1,   -1},
-        {-1,  1},
-        {1,   -1},
+        {1,     0},
+        {1,     -1},
+        {0,     -1},
+        {0,     1},
+        {0,    -1},
+        {-1,    1}
         
     };
     
     int r;
     int c;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
         r = position.getRow() + possible[i].row;
         c = position.getCol() + possible[i].col;
