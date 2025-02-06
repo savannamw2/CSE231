@@ -12,16 +12,18 @@
 #include <cassert>
 #include <iostream>
 #include <sstream>
+#include <bitset>
 
 using namespace std;
 
 /***************************************************
  * MOVE : DEFAULT CONSTRUCTOR
  ***************************************************/
-Move::Move()
-: source(), dest(), promote(SPACE), capture(SPACE), moveType(MOVE), isWhite(true), text("") {}
+Move::Move() : promote(PieceType::INVALID), capture(PieceType::INVALID), moveType(Move::MoveType::MOVE), isWhite(true)
+{
+}
 
-Move::Move(const Position& source, const Position& dest, PieceType promote, PieceType capture, MoveType moveType, bool isWhite)
+Move::Move(const Position& source, const Position dest, PieceType promote, PieceType capture, MoveType moveType, bool isWhite)
 {
    this->source = source;
    this->dest = dest;
@@ -32,71 +34,158 @@ Move::Move(const Position& source, const Position& dest, PieceType promote, Piec
    this->text = getText();
 }
 
-Move::Move(const Position& source, const Position& dest, const set<Move>& possible)
+Move::Move(const char* text, const bool& isWhite)
 {
-   bool matched = false;
-   for (const Move& move : possible)
-   {
-       if (getSrc() == source && getDes() == dest)
-      {
-          this->source = source;
-          this->dest = dest;
-          this->isWhite = move.getWhiteMove();
-          this->promote = move.getPromoted();
-          this->capture = move.getCapture();
-          this->moveType = move.getMoveType();
-          this->text = move.getText();
-         matched = true;
-      }
-   }
-
-   if (!matched)
-   {
-      Move();
-   }
-
+   read(string(text));
+   this->isWhite = isWhite;
 }
 
-void Move::read(const string & s)
+Move::Move(const char* text)
 {
-    text = s;
+   read(string(text));
+   this->isWhite = true;
+}
 
-    char sourceTxt[3] = {s[0], s[1], '\0'};
-    source = sourceTxt;
-    
-    char destTxt[3] = {s[2], s[3], '\0'};
-       dest = destTxt;
-    
-    
-    capture = SPACE;
-    promote = SPACE;
-    moveType = MOVE;
-    isWhite = true;  // Default to white's move (adjust if needed)
+Move::Move(const string text, const bool& isWhite)
+{
+   read(text);
+   this->isWhite = isWhite;
+}
 
-    for (size_t i = 4; i < s.size(); ++i)
-        {
-            switch (s[i])
-            {
-                case 'p': capture = PAWN; break;
-                case 'n': capture = KNIGHT; break;
-                case 'b': capture = BISHOP; break;
-                case 'r': capture = ROOK; break;
-                case 'q': capture = QUEEN; break;
+bool Move::operator==(const Move& rhs) const
+{
+   return this->source == rhs.source
+      && this->dest == rhs.dest
+      && this->promote == rhs.promote
+      && this->capture == rhs.capture
+      && this->moveType == rhs.moveType
+      && this->isWhite == rhs.isWhite
+      && this->text == rhs.text;
+}
 
-                case 'c': moveType = CASTLE_KING; break;
-                case 'C': moveType = CASTLE_QUEEN; break;
-                case 'E': moveType = ENPASSANT; break;
+bool Move::operator!=(const Move& rhs) const
+{
+   return this->source != rhs.source
+      || this->dest != rhs.dest
+      || this->promote != rhs.promote
+      || this->capture != rhs.capture
+      || this->moveType != rhs.moveType
+      || this->isWhite != rhs.isWhite
+      || this->text != rhs.text;
+}
 
-                case 'N': promote = KNIGHT; break;
-                case 'B': promote = BISHOP; break;
-                case 'R': promote = ROOK; break;
-                case 'Q': promote = QUEEN; break;
-            }
-        }
+char Move::letterFromPieceType(PieceType pt) const
+{
+    switch (pt)
+    {
+        case PieceType::SPACE:
+            return ' ';
+        case PieceType::PAWN:
+            return 'p';
+        case PieceType::BISHOP:
+            return 'b';
+        case PieceType::KNIGHT:
+            return 'n';
+        case PieceType::ROOK:
+            return 'r';
+        case PieceType::QUEEN:
+            return 'q';
+        case PieceType::KING:
+            return 'k';
+//        case PieceType::INVALID:
+//            return default;
+   }
 
-        // Ensure moveType is correctly set if a capture occurred
-        if (capture != SPACE && moveType == MOVE) {
-            moveType = MOVE; // Standard move with capture
-        }
-    
+   return -1;
+}
+
+PieceType Move::pieceTypeFromLetter(char letter) const
+{
+   switch (letter)
+   {
+   case 'p':
+      return PieceType::PAWN;
+   case 'b':
+      return PieceType::BISHOP;
+   case 'n':
+      return PieceType::KNIGHT;
+   case 'r':
+      return PieceType::ROOK;
+   case 'q':
+      return PieceType::QUEEN;
+   case 'k':
+      return PieceType::KING;
+   }
+
+   return PieceType::INVALID;
+}
+
+void Move::read(const string& text)
+{
+   this->text = text;
+   string firstTwo_s = text.substr(0, 2);
+   const char* firstTwo = firstTwo_s.c_str();
+   this->source = Position(firstTwo);
+
+   string nextTwo_s = text.substr(2, 4);
+   const char* nextTwo = nextTwo_s.c_str();
+   this->dest = Position(nextTwo);
+
+   this->moveType = MoveType::MOVE;
+   promote = PieceType::INVALID;
+   capture = PieceType::SPACE;
+
+   if (this->text.length() < 5)
+      return;
+
+   string moveNotes = this->text.substr(4, 7);
+
+
+   char fifthChar = text[4];
+   for (char character : moveNotes)
+      if (islower(character))
+      {
+         if (character != 'c')
+            capture = pieceTypeFromLetter(fifthChar);
+         else
+            moveType = CASTLE_KING;
+
+      }
+      else
+      {
+         // if (character == 'Q')
+         //    moveType = MoveType::PROMOTION;
+         if (character == 'E')
+            moveType = MoveType::ENPASSANT;
+         if (character == 'C')
+            moveType = MoveType::CASTLE_QUEEN;
+      }
+}
+
+string Move::getText() const
+{
+   // Get PositionFrom
+   string returnText;
+   returnText += source.getCol() + 'a';
+   returnText += source.getRow() + '1';
+
+   // Get PositionTo
+   returnText += dest.getCol() + 'a';
+   returnText += dest.getRow() + '1';
+
+   // captured a piece?
+   if (capture != PieceType::INVALID && capture != PieceType::SPACE && moveType != MoveType::ENPASSANT)
+      returnText += letterFromPieceType(capture);
+
+   // Enpassant?
+   if (moveType == MoveType::ENPASSANT)
+      returnText += 'E';
+
+   // Castled?
+   if (moveType == MoveType::CASTLE_KING)
+      returnText += 'c';
+   if (moveType == MoveType::CASTLE_QUEEN)
+      returnText += 'C';
+
+   return returnText;
 }

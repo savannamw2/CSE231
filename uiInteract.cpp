@@ -43,24 +43,6 @@
 
 using namespace std;
 
-/***************************************************
- * STATICS
- * All the static member variables need to be initialized
- * Somewhere globally.  This is a good spot
- **************************************************/
-Position      Interface::posHover = -1;
-Position      Interface::posSelect = -1;
-Position      Interface::posSelectPrevious = -1;
-bool          Interface::initialized = false;
-double        Interface::timePeriod = 0.2; // default to 5 frames/second
-unsigned long Interface::nextTick = 0;        // redraw now please
-void* Interface::p = NULL;
-void (*Interface::callBack)(Interface*, void*) = NULL;
-char          Interface::key = '\0';
-
-double Position::squareWidth  = (double)SIZE_SQUARE;
-double Position::squareHeight = (double)SIZE_SQUARE;
-
 
 /*********************************************************************
  * SLEEP
@@ -130,7 +112,6 @@ void drawCallback()
  *   INPUT   button:   the mouse button we selected
  *           state:    the state of the button (down, up, etc)
  *           x,y:      coordinates of the mouse at click
- *                     in absolute (non-ortho) values.
  *************************************************************************/
 void clickCallback(int button, int state, int x, int y)
 {
@@ -156,8 +137,7 @@ void clickCallback(int button, int state, int x, int y)
 /************************************************************************
  * MOVE CALLBACK
  * When the user has clicked the mouse
- *   INPUT   x,y:      coordinates of the mouse at click, 
- *                     in absolute (non-ortho) values.
+ *   INPUT   x,y:      coordinates of the mouse at click
  *************************************************************************/
 void moveCallback(int x, int y)
 {
@@ -176,17 +156,16 @@ void moveCallback(int x, int y)
  * RESIZE CALLBACK
  * When the user has clicked the mouse
  *   INPUT   x,y:      coordinates of the mouse at click
- *                     in absolute (non-ortho) values.
  *************************************************************************/
 void resizeCallback(int width, int height)
 {
     // Even though this is a local variable, the square_width and square_height
     // member variables are static.
     Position pos;
-    pos.setBoardWidthHeight(width, height);
 
-    // This tells OpenGl to use the original dimensions of the board
-    // when drawing, which is SIZE_SQUARE*10 X SIZE_SQUARE*10 
+    pos.setSquareWidth ((double)(width - OFFSET_BOARD * 2) / 8.0 );
+    pos.setSquareHeight((double)(height- OFFSET_BOARD * 2) / 8.0);
+
     glViewport(0, 0, width, height);
 }
 
@@ -230,6 +209,24 @@ void Interface::setFramesPerSecond(double value)
 {
     timePeriod = (1.0 / value);
 }
+
+/***************************************************
+ * STATICS
+ * All the static member variables need to be initialized
+ * Somewhere globally.  This is a good spot
+ **************************************************/
+Position      Interface::posHover = -1;
+Position      Interface::posSelect = -1;
+Position      Interface::posSelectPrevious = -1;
+bool          Interface::initialized   = false;
+double        Interface::timePeriod    = 0.2; // default to 5 frames/second
+unsigned long Interface::nextTick      = 0;        // redraw now please
+void *        Interface::p             = NULL;
+void (*Interface::callBack)(Interface *, void *) = NULL;
+char          Interface::key          = '\0';
+
+double Position::squareWidth  = (double)SIZE_SQUARE;
+double Position::squareHeight = (double)SIZE_SQUARE;
 
 /***************************************************************
  * KEYBOARD CALLBACK
@@ -278,36 +275,40 @@ void Interface::initialize(const char * title)
 {
    if (initialized)
       return;
+   Position pos;
+
+   // set up the random number generator
+   srand((unsigned int)time(NULL));
 
    // create the window
    int argc = 0;
    glutInit(&argc, NULL);
-   Position pos;
-   int xMax = 10 * (int)pos.getSquareWidth();
-   int yMax = 10 * (int)pos.getSquareHeight();
-   glutInitWindowSize(xMax, yMax); //  size ofthe window
+   glutInitWindowSize(8 * (int)pos.getSquareWidth()  - 1 + OFFSET_BOARD * 2,   // size of
+                      8 * (int)pos.getSquareHeight() - 1 + OFFSET_BOARD * 2); // the window
             
-   glutInitWindowPosition( 10, 10);                // initial position 
+   glutInitWindowPosition( 10, 10);                // initial position
    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);    // double buffering
    glutCreateWindow(title);                        // text on titlebar
    glutIgnoreKeyRepeat(true);
    
    // set up the drawing style: B/W and 2D
    glClearColor(0,0,0, 0);                   // Black is the background color
-   gluOrtho2D((GLdouble)0.0, (GLdouble)xMax,
-              (GLdouble)0.0, (GLdouble)yMax);
+   gluOrtho2D((GLdouble)0.0, (GLdouble)(8.0 * pos.getSquareWidth() + (int)(OFFSET_BOARD * 2)),
+              (GLdouble)0.0, (GLdouble)(8.0 * pos.getSquareHeight()+ (int)(OFFSET_BOARD * 2)));
+   glutReshapeWindow(8 * (int)pos.getSquareWidth()  - 1 + OFFSET_BOARD * 2,
+                     8 * (int)pos.getSquareHeight() - 1 + OFFSET_BOARD * 2);
 
    // register the callbacks so OpenGL knows how to call us
-   glutDisplayFunc(       drawCallback    );
-   glutIdleFunc(          drawCallback    );
-   glutMouseFunc(         clickCallback   );
-   glutPassiveMotionFunc( moveCallback    );
-   glutReshapeFunc(       resizeCallback  );
-   glutKeyboardFunc(      keyboardCallback);
+   glutDisplayFunc(      drawCallback    );
+   glutIdleFunc(         drawCallback    );
+   glutMouseFunc(        clickCallback   );
+   glutPassiveMotionFunc(moveCallback    );
+   glutReshapeFunc(      resizeCallback  );
+   glutKeyboardFunc(     keyboardCallback);
 
 #ifdef __APPLE__
    glutWMCloseFunc(      closeCallback   );
-#endif 
+#endif
    initialized = true;
    
    // done
@@ -335,4 +336,3 @@ void Interface::run(void (*callBack)(Interface *, void *), void *p)
 
    return;
 }
-

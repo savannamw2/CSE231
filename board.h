@@ -2,16 +2,15 @@
  * Header File:
  *    BOARD
  * Author:
- *    Savanna & Isabel
+ *    <your name here>
  * Summary:
  *    A collection of pieces and the state of the board
  ************************************************************************/
 
 #pragma once
 
-#include "move.h"   // Because we return a set of Move
 #include <cassert>
-#include <set>
+#include "move.h"   // Because we return a set of Move
 
 class ogstream;
 class TestPawn;
@@ -41,7 +40,7 @@ class Board
    friend TestBoard;
 
 public:
-   // constructor and destuctor
+   // constructors
    // create and destroy the board
    Board(ogstream* pgout = nullptr, bool noreset = false);
    virtual ~Board() { free(); }
@@ -49,7 +48,7 @@ public:
    // getters
    virtual int  getCurrentMove() const { return numMoves; }
    virtual bool whiteTurn()      const { return numMoves % 2 == 0; }
-    virtual void display(const Position& posHover, const Position& posSelect) const;
+   virtual void display(const Position& posHover, const Position& posSelect) const;
    virtual const Piece& operator [] (const Position& pos) const;
 
    // setters
@@ -110,19 +109,19 @@ class BoardEmpty : public BoardDummy
    friend TestBoard;
 public:
    Piece * pSpace;
-    int numMoves; 
+   int moveNumber;
 
    BoardEmpty();
    ~BoardEmpty();
    const Piece& operator [] (const Position& pos) const
-   {
+    {
       assert(pos.isValid());
       if (board[pos.getCol()][pos.getRow()])
          return *(board[pos.getCol()][pos.getRow()]);
       else
          return *pSpace;
    }
-   int getCurrentMove() const {
-      return numMoves;
+   int  getCurrentMove() const {
+      return moveNumber;
    }
 };

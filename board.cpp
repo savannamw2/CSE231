@@ -1,10 +1,10 @@
 /***********************************************************************
  * Source File:
- *    BOARD 
+ *    BOARD
  * Author:
- *    Savanna & Isabel
+*   Savanna and Isabel
  * Summary:
- *    A collection of pieces and a small amount of game state
+ *    A collection of pieces and the state of the board
  ************************************************************************/
 
 #include "board.h"
@@ -13,9 +13,11 @@
 #include "piece.h"
 #include "pieceSpace.h"
 #include "pieceKnight.h"
-#include <cassert>
 using namespace std;
 
+
+//// we really REALLY need to delete this.
+//Space space;
 
 /***********************************************
  * BOARD : RESET
@@ -45,9 +47,8 @@ void Board::reset(bool fFree)
    board[6][7] = new Knight(6, 7, true);
 }
 
-
 // we really REALLY need to delete this.
-Space space(0,0);
+Space space(0, 0);
 
 /***********************************************
 * BOARD : GET
@@ -56,44 +57,35 @@ Space space(0,0);
 const Piece& Board::operator [] (const Position& pos) const
 {
    return *(board[pos.getCol()][pos.getRow()]);
+   //return space;
 }
-
 Piece& Board::operator [] (const Position& pos)
 {
    return *(board[pos.getCol()][pos.getRow()]);
+   //return space;
 }
 
-
-
- /***********************************************
- * BOARD : DISPLAY
- *         Display the board
- ***********************************************/
-void Board::display(const Position & posHover, const Position & posSelect) const
+// Ticket 5
+/***********************************************
+* BOARD : DISPLAY
+*         Display the board
+***********************************************/
+void Board::display(const Position& posHover, const Position& posSelect) const
 {
-    pgout->drawBoard();
-    
-    
-    // draw any selections
-    pgout->drawHover(posHover);
-    pgout->drawSelected(posSelect);
-    
-    
-    // draw the pieces
-    for (const auto& row : board)
-    {
-        for (const auto& piece : row)
-        {
-            if (piece != nullptr)
-            {
-                piece->display(pgout);
-            }
-        }
-        
-    }
-}
-   
+   // draw the checkerboard
+   pgout->drawBoard();
 
+   // draw any selections
+   pgout->drawHover(posHover);
+   pgout->drawSelected(posSelect);
+
+   // draw the pieces
+   for (const auto& row : board)
+      for (const auto& piece : row)
+         if (piece != nullptr)
+            piece->display(pgout);
+
+}
 
 /************************************************
  * BOARD : CONSTRUCT
@@ -101,14 +93,12 @@ void Board::display(const Position & posHover, const Position & posSelect) const
  ************************************************/
 Board::Board(ogstream* pgout, bool noreset) : pgout(pgout), numMoves(0)
 {
-    for (int col = 0; col < 8; col++)
-       {
-          for (int row = 0; row < 8; row++)
-             board[col][row] = nullptr;
-       }
-
+   for (int col = 0; col < 8; col++)
+   {
+      for (int row = 0; row < 8; row++)
+         board[col][row] = nullptr;
+   }
 }
-
 
 /************************************************
  * BOARD : FREE
@@ -116,17 +106,15 @@ Board::Board(ogstream* pgout, bool noreset) : pgout(pgout), numMoves(0)
  ************************************************/
 void Board::free()
 {
-    for (int col = 0; col < 8; col++)
-       {
-          for (int row = 0; row < 8; row++)
-          {
-             delete board[col][row];
-             board[col][row] = nullptr;
-          }
-       }
-
+   for (int col = 0; col < 8; col++)
+   {
+      for (int row = 0; row < 8; row++)
+      {
+         delete board[col][row];
+         board[col][row] = nullptr;
+      }
+   }
 }
-
 
 /**********************************************
  * BOARD : ASSERT BOARD
@@ -137,33 +125,28 @@ void Board::assertBoard()
 
 }
 
-
-
-
 /**********************************************
  * BOARD : MOVE
  *         Execute a move according to the contained instructions
  *   INPUT move The instructions of the move
  *********************************************/
-void Board::move(const Move & move)
+void Board::move(const Move& move)
 {
-    numMoves++;
+   numMoves++;
 
-    Position source = move.getSrc();
-    Position dest = move.getDes();
-    
-    (*this)[source].setLastMove(getCurrentMove());
-    
-    if (move.getCapture() != SPACE)
-    {
-        board[dest.getCol()][dest.getRow()] = new Space(dest.getCol(), dest.getRow());
-    }
+   Position source = move.getSource();
+   Position dest = move.getDest();
 
-    std::swap(board[source.getCol()][source.getRow()], board[dest.getCol()][dest.getRow()]);
+   (*this)[source].incrementNMoves();
+   (*this)[source].setLastMove(getCurrentMove());
 
+   if (move.getCatpure() != SPACE)
+   {
+      board[dest.getCol()][dest.getRow()] = new Space(dest.getCol(), dest.getRow());
+   }
+
+   std::swap(board[source.getCol()][source.getRow()], board[dest.getCol()][dest.getRow()]);
 }
-
-
 
 /**********************************************
  * BOARD EMPTY
@@ -171,7 +154,7 @@ void Board::move(const Move & move)
  * It does not even have spaces though each non-filled
  * spot will report it has a space. This is for unit testing
  *********************************************/
-BoardEmpty::BoardEmpty() : BoardDummy(), pSpace(nullptr), numMoves(0)
+BoardEmpty::BoardEmpty() : BoardDummy(), pSpace(nullptr), moveNumber(0)
 {
    pSpace = new Space(0, 0);
 }

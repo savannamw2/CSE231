@@ -2,7 +2,7 @@
  * Header File:
  *    SPACE
  * Author:
- *    <your name here> 
+ *    <your name here>
  * Summary:
  *    The space
  ************************************************************************/
@@ -20,10 +20,9 @@ class TestSpace;
 class Space : public Piece
 {
    friend TestSpace;
-
-    public:
+public:
    Space(int c, int r) : Piece(c, r)   {               }
    ~Space()                            {               }
-    PieceType getType()           const { return SPACE;  }
+   PieceType getType() const           { return SPACE; }
    void display(ogstream* pgout) const {               }
 };

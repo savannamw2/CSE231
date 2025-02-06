@@ -27,25 +27,25 @@ public:
       getLocation_zero();
       isValid_zero();
       isInvalid_zero();
-      
-      
+
+
       getRow_middle();
       getCol_middle();
       getLocation_middle();
       isValid_middle();
       isInvalid_middle();
-      
+
       getRow_end();
       getCol_end();
       getLocation_end();
       isValid_end();
       isInvalid_end();
-      
+
       getRow_invalid();
       getCol_invalid();
       isValid_invalid();
       isInvalid_invalid();
-      
+
       getRow_rowInvalid();
       getCol_rowInvalid();
       isValid_rowInvalid();
@@ -62,7 +62,7 @@ public:
       set_text();
       set_string();
       set_copy();
-         
+
       // adjust
       adjust_addColumn();
       adjust_addRow();
@@ -72,23 +72,11 @@ public:
       adjust_offBottom();
       adjust_invalid();
 
-      // pixels vs coordinates
-      getX_a1();
-      getY_a1();
-      getX_e7();
-      getY_e7();
-      getWidth_10();
-      getHeight_10();
-      setBoardWidthHeight_10();
-      setBoardWidthHeight_420x830();
-      setXY_a8();
-      setXY_a1();
-      setXY_h8();
-      setXY_h1();
-      setXY_invalidXMin();
-      setXY_invalidXMax();
-      setXY_invalidYMin();
-      setXY_invalidYMax();
+      equal_not();
+      equal_equals();
+      lessthan_lessthan();
+      lessthan_equals();
+      lessthan_greaterthan();
       
       report("Position");
    }
@@ -140,20 +128,9 @@ private:
    void adjust_offBottom();
    void adjust_invalid();
 
-   void getX_a1();
-   void getY_a1();
-   void getX_e7();
-   void getY_e7();
-   void getWidth_10();
-   void getHeight_10();
-   void setBoardWidthHeight_10();
-   void setBoardWidthHeight_420x830();
-   void setXY_a8();
-   void setXY_a1();
-   void setXY_h8();
-   void setXY_h1();
-   void setXY_invalidXMin();
-   void setXY_invalidXMax();
-   void setXY_invalidYMin();
-   void setXY_invalidYMax();
+   void equal_not();
+   void equal_equals();
+   void lessthan_lessthan();
+   void lessthan_equals();
+   void lessthan_greaterthan();
 };

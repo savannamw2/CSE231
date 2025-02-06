@@ -2,7 +2,7 @@
  * Source File:
  *    TEST POSITION
  * Author:
- *    Br. Helfrich
+ *    <your name here>
  * Summary:
  *    The unit tests for Position
  ************************************************************************/
@@ -11,7 +11,6 @@
 #include "testPosition.h" // for POSITION_TEST
 #include "position.h"     // for POSITION
 #include <cassert>        // for ASSERT
-
 
 /***********************************************
  * GET  Zero
@@ -614,7 +613,7 @@ void PositionTest::set_both()
 
 /*************************************
  * SET TEST Text
- * Set to "c6" 
+ * Set to "c6"
  * +---a----b----c----d----e----f----g----h----+
  * |                                           |
  * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
@@ -878,77 +877,47 @@ void PositionTest::adjust_invalid()
 }
 
 
-
 /*************************************
- * GET_X  A1
- * Bottom Left
+ * EQUALS NOT
+ * 0x25 != 0x43
  * +---a----b----c----d----e----f----g----h----+
  * |                                           |
  * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
  * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
+ * 6  0x05 0x15(0x25)0x35 0x45 0x55 0x65 0x75  6
  * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
+ * 4  0x03 0x13 0x23 0x33(0x43)0x53 0x63 0x73  4
  * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
  * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1 (0x00)0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
+ * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
  * |                                           |
  * +---a----b----c----d----e----f----g----h----+
  **************************************/
-void PositionTest::getX_a1()
+void PositionTest::equal_not()
 {
    // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x00;
-   pos.squareWidth = 17;
-   pos.squareHeight = 19;
-   int x = -99;
+   Position posLHS;
+   posLHS.colRow = 0x25;
+   Position posRHS;
+   posRHS.colRow = 0x43;
+   bool response;
 
    // EXERCISE
-   x = pos.getX();
+   response = (posLHS == posRHS);
 
    // VERIFY
-   assertUnit(x == 17);
+   assertUnit(response == false);
 
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-void PositionTest::getY_a1()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x00;
-   pos.squareWidth = 17;
-   pos.squareHeight = 19;
-   int y = -99;
-
-   // EXERCISE
-   y = pos.getY();
-
-   // VERIFY
-   assertUnit(y == 19);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
+}  // TEARDOWN
 
 /*************************************
- * GET_X  E7
- * In the middle somewhere
+ * EQUALS EQUALS
+ * 0x25 != 0x25
  * +---a----b----c----d----e----f----g----h----+
  * |                                           |
  * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
- * 7  0x06 0x16 0x26 0x36(0x46)0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
+ * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
+ * 6  0x05 0x15(0x25)0x35 0x45 0x55 0x65 0x75  6
  * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
  * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
  * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
@@ -957,160 +926,64 @@ void PositionTest::getY_a1()
  * |                                           |
  * +---a----b----c----d----e----f----g----h----+
  **************************************/
-void PositionTest::getX_e7()
+void PositionTest::equal_equals()
 {
    // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 19;
-   int x = -99;
+   Position posLHS;
+   posLHS.colRow = 0x25;
+   Position posRHS;
+   posRHS.colRow = 0x25;
+   bool response;
 
    // EXERCISE
-   x = pos.getX();
+   response = (posLHS == posRHS);
 
    // VERIFY
-   assertUnit(x == 17 * 5);
+   assertUnit(response == true);
 
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-void PositionTest::getY_e7()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 19;
-   int y = -99;
-
-   // EXERCISE
-   y = pos.getY();
-
-   // VERIFY
-   assertUnit(y == 19 * 7);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
+}  // TEARDOWN
 
 /*************************************
- * GET WIDTH  10
- * Size of a single square where the board size is 10
- *************************************/
-void PositionTest::getWidth_10()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.squareWidth = 10;
-   pos.squareHeight = 99;
-   int w = -99;
-
-   // EXERCISE
-   w = pos.getSquareWidth();
-
-   // VERIFY
-   assertUnit(w == 10);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-void PositionTest::getHeight_10()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.squareWidth = 99;
-   pos.squareHeight = 10;
-   int h = -99;
-
-   // EXERCISE
-   h = pos.getSquareHeight();
-
-   // VERIFY
-   assertUnit(h == 10);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET BOARD WIDTH HEIGHT
- * Set the size of a square based on the size of the board
- *************************************/
-void PositionTest::setBoardWidthHeight_10()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.squareWidth = 88;
-   pos.squareHeight = 99;
-   int w = 10;
-   int h = 10;
-
-   // EXERCISE
-   pos.setBoardWidthHeight(w, h);
-
-   // VERIFY
-   assertUnit(pos.squareWidth == 1.0);
-   assertUnit(pos.squareHeight == 1.0);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-void PositionTest::setBoardWidthHeight_420x830()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.squareWidth = 88;
-   pos.squareHeight = 99;
-   int w = 420;
-   int h = 830;
-
-   // EXERCISE
-   pos.setBoardWidthHeight(w, h);
-
-   // VERIFY
-   assertUnit(pos.squareWidth == 42.0);
-   assertUnit(pos.squareHeight == 83.0);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   a8
- * Top left
+ * LESSTHAN less than
+ * 0x25 < 0x43
  * +---a----b----c----d----e----f----g----h----+
  * |                                           |
- * 8 (0x07)0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
+ * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
  * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
+ * 6  0x05 0x15(0x25)0x35 0x45 0x55 0x65 0x75  6
+ * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
+ * 4  0x03 0x13 0x23 0x33(0x43)0x53 0x63 0x73  4
+ * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
+ * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
+ * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
+ * |                                           |
+ * +---a----b----c----d----e----f----g----h----+
+ **************************************/
+void PositionTest::lessthan_lessthan()
+{
+   // SETUP
+   Position posLHS;
+   posLHS.colRow = 0x25;
+   Position posRHS;
+   posRHS.colRow = 0x43;
+   bool response;
+
+   // EXERCISE
+   response = (posLHS < posRHS);
+
+   // VERIFY
+   assertUnit(response == true);
+
+}  // TEARDOWN
+
+/*************************************
+ * LESSTHAN equals
+ * 0x25 < 0x25
+ * +---a----b----c----d----e----f----g----h----+
+ * |                                           |
+ * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
+ * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
+ * 6  0x05 0x15(0x25)0x35 0x45 0x55 0x65 0x75  6
  * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
  * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
  * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
@@ -1119,302 +992,52 @@ void PositionTest::setBoardWidthHeight_420x830()
  * |                                           |
  * +---a----b----c----d----e----f----g----h----+
  **************************************/
-void PositionTest::setXY_a8()
+void PositionTest::lessthan_equals()
 {
    // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 35;
-   int x = 18;
-   int y = 37;
+   Position posLHS;
+   posLHS.colRow = 0x25;
+   Position posRHS;
+   posRHS.colRow = 0x25;
+   bool response;
 
    // EXERCISE
-   pos.setXY(x, y);
+   response = (posLHS < posRHS);
 
    // VERIFY
-   assertUnit(pos.colRow == 0x07);
+   assertUnit(response == false);
 
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
+}  // TEARDOWN
 
 /*************************************
- * SET X Y   a1
- * Bottom left
+ * LESSTHAN greaterthan
+ * 0x43 < 0x25
  * +---a----b----c----d----e----f----g----h----+
  * |                                           |
  * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
  * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
+ * 6  0x05 0x15(0x25)0x35 0x45 0x55 0x65 0x75  6
  * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
- * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
- * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1 (0x00)0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
- * |                                           |
- * +---a----b----c----d----e----f----g----h----+
- **************************************/
-void PositionTest::setXY_a1()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 18;
-   int y = 37 + (37 * 7) + 24;
-
-   // EXERCISE
-   pos.setXY(x, y);
-
-   // VERIFY
-   assertUnit(pos.colRow == 0x00);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   h8
- * Top Right
- * +---a----b----c----d----e----f----g----h----+
- * |                                           |
- * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67(0x77) 8
- * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
- * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
+ * 4  0x03 0x13 0x23 0x33(0x43)0x53 0x63 0x73  4
  * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
  * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
  * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
  * |                                           |
  * +---a----b----c----d----e----f----g----h----+
  **************************************/
-void PositionTest::setXY_h8()
+void PositionTest::lessthan_greaterthan()
 {
    // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 17 + (17 * 7) + 12;
-   int y = 43;
+   Position posLHS;
+   posLHS.colRow = 0x42;
+   Position posRHS;
+   posRHS.colRow = 0x25;
+   bool response;
 
    // EXERCISE
-   pos.setXY(x, y);
+   response = (posLHS < posRHS);
 
    // VERIFY
-   assertUnit(pos.colRow == 0x77);
+   assertUnit(response == false);
 
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   h1
- * Bottom right
- * +---a----b----c----d----e----f----g----h----+
- * |                                           |
- * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
- * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
- * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
- * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
- * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60(0x70)  1
- * |                                           |
- * +---a----b----c----d----e----f----g----h----+
- **************************************/
-void PositionTest::setXY_h1()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 17 + (17 * 7) + 12;
-   int y = 37 + (37 * 7) + 24;
-
-   // EXERCISE
-   pos.setXY(x, y);
-
-   // VERIFY
-   assertUnit(pos.colRow == 0x70);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   invalid xmin
- * +---a----b----c----d----e----f----g----h----+
- * |                                           |
- * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
- * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
- * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
- * 3()0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
- * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
- * |                                           |
- * +---a----b----c----d----e----f----g----h----+
- **************************************/
-void PositionTest::setXY_invalidXMin()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 12;
-   int y = 37 + (37 * 5) + 24;
-
-   // EXERCISE
-   pos.setXY(x, y);
-
-   // VERIFY
-   assertUnit(pos.colRow == 0xff);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   invalid xmax
- * +---a----b----c----d----e----f----g----h----+
- * |                                           |
- * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
- * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
- * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
- * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72()3
- * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
- * |                                           |
- * +---a----b----c----d----e----f----g----h----+
- **************************************/
-void PositionTest::setXY_invalidXMax()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 17 + (17 * 8) + 2;
-   int y = 37 + (37 * 5) + 24;
-
-   // EXERCISE
-   pos.setXY(x, y);
-
-   // VERIFY
-   assertUnit(pos.colRow == 0xff);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   invalid ymin
- * +---a----b----c----d----e----f----g----h----+
- * |                 ( )                       |
- * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
- * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
- * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
- * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
- * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
- * |                                           |
- * +---a----b----c----d----e----f----g----h----+
- **************************************/
-void PositionTest::setXY_invalidYMin()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 17 + (17 * 3) + 15;
-   int y = 25;
-
-   // EXERCISE
-   pos.setXY(x, y);
-
-   // VERIFY
-   assertUnit(pos.colRow == 0x3f);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
-
-/*************************************
- * SET X Y   invalid ymax
- * +---a----b----c----d----e----f----g----h----+
- * |                                           |
- * 8  0x07 0x17 0x27 0x37 0x47 0x57 0x67 0x77  8
- * 7  0x06 0x16 0x26 0x36 0x46 0x56 0x66 0x76  7
- * 6  0x05 0x15 0x25 0x35 0x45 0x55 0x65 0x75  6
- * 5  0x04 0x14 0x24 0x34 0x44 0x54 0x64 0x74  5
- * 4  0x03 0x13 0x23 0x33 0x43 0x53 0x63 0x73  4
- * 3  0x02 0x12 0x22 0x32 0x42 0x52 0x62 0x72  3
- * 2  0x01 0x11 0x21 0x31 0x41 0x51 0x61 0x71  2
- * 1  0x00 0x10 0x20 0x30 0x40 0x50 0x60 0x70  1
- * |                  ()                       |
- * +---a----b----c----d----e----f----g----h----+
- **************************************/
-void PositionTest::setXY_invalidYMax()
-{
-   // SETUP
-   Position pos;
-   double squareWidth = pos.squareWidth;
-   double squareHeight = pos.squareHeight;
-
-   pos.colRow = 0x46;
-   pos.squareWidth = 17;
-   pos.squareHeight = 37;
-   int x = 17 + (17 * 3) + 15;
-   int y = 37 + (37 * 8) + 2;
-
-   // EXERCISE
-   pos.setXY(x, y);
-
-   // VERIFY
-   assertUnit(pos.colRow == 0x3f);
-
-   // TEARDOWN
-   pos.squareWidth = squareWidth;
-   pos.squareHeight = squareHeight;
-}
+}  // TEARDOWN

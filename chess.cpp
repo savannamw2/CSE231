@@ -18,7 +18,6 @@
 #include <cassert>        // for ASSERT
 #include <fstream>        // for IFSTREAM
 #include <string>         // for STRING
-#include "pieceKnight.h"
 using namespace std;
 
 
@@ -32,10 +31,9 @@ using namespace std;
 void callBack(Interface *pUI, void * p)
 {
    // the first step is to cast the void pointer into a game object. This
-   // is the first step of every single callback function in OpenGL. 
-    Board * pBoard = (Board *)p;
-    pBoard->display(pUI->getHoverPosition(), pUI->getSelectPosition());
-    
+   // is the first step of every single callback function in OpenGL.
+   Board * pBoard = (Board *)p;
+   pBoard->display(pUI->getHoverPosition(), pUI->getSelectPosition());
 }
 
 
@@ -58,14 +56,15 @@ int main(int argc, char** argv)
    testRunner();
    
    // Instantiate the graphics window
-   Interface ui("Chess");    
+   Interface ui("Chess");
 
    // Initialize the game class
    ogstream* pgout = new ogstream;
    Board board(pgout);
+   board.reset();
 
    // set everything into action
-   ui.run(callBack, (void *)(&board));      
+   ui.run(callBack, (void *)(&board));
    
    // All done.
    delete pgout;
