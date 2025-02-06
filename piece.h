@@ -219,6 +219,27 @@ public:
    void getMoves(set <Move>& moves, const Board& board) const { }
 };
 
+/***************************************************
+ * WHITE PIECE NOT MOVED
+ * Generic piece whose only allowable property is the color
+ * and the number of moves, which is 0
+ **************************************************/
+class WhiteNotMoved : public PieceDummy
+{
+   PieceType pt;
+public:
+   WhiteNotMoved() : PieceDummy(), pt(ROOK) {}
+   WhiteNotMoved(PieceType pt) : PieceDummy(), pt(pt) {}
+   bool isWhite() const {
+      return true;
+   }
+   PieceType getType() const {
+      return pt;
+   }
+   int getNMoves() const { return 0; }
+   void getMoves(set <Move>& moves, const Board& board) const { }
+};
+
 class Black : public PieceDummy
 {
    PieceType pt;
