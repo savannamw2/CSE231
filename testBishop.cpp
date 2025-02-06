@@ -193,9 +193,9 @@ void TestBishop::getMoves_slideToBlock()
  **************************************/
 void TestBishop::getMoves_slideToCapture()
 {
-    Bishop b(7, 7, true);
+    Bishop b(7, 7, false);
     
-    b.fWhite = false;
+    b.fWhite = true;
     b.position.colRow = 0x21;
     
     BoardEmpty board;
