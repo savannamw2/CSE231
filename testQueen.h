@@ -22,7 +22,7 @@ public:
    void run()
    {
       getMoves_blocked();
-      getMoves_slideToEnd(); 
+      getMoves_slideToEnd();
       getMoves_slideToBlock();
       getMoves_slideToCapture();
 
