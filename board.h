@@ -121,6 +121,7 @@ public:
       else
          return *pSpace;
    }
+
    int  getCurrentMove() const {
       return moveNumber;
    }

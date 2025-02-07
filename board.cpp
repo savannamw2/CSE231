@@ -13,6 +13,12 @@
 #include "piece.h"
 #include "pieceSpace.h"
 #include "pieceKnight.h"
+#include "pieceKing.h"
+#include "piecePawn.h"
+#include "pieceQueen.h"
+#include "pieceBishop.h"
+#include "pieceRook.h"
+#include "piecePawn.h"
 using namespace std;
 
 
@@ -37,14 +43,36 @@ using namespace std;
  ***********************************************/
 void Board::reset(bool fFree)
 {
-   // free everything
-   for (int r = 0; r < 8; r++)
-      for (int c = 0; c < 8; c++)
-         board[c][r] = nullptr;
-   board[1][0] = new Knight(1, 0, false);
-   board[6][0] = new Knight(6, 0, false);
-   board[1][7] = new Knight(1, 7, true);
-   board[6][7] = new Knight(6, 7, true);
+    if (fFree)
+       free();
+
+    board[0][0] = new Rook(0, 0, true);
+    board[7][0] = new Rook(7, 0, true);
+    board[0][7] = new Rook(0, 7, false);
+    board[7][7] = new Rook(7, 7, false);
+    board[1][0] = new Knight(1, 0, true);
+    board[6][0] = new Knight(6, 0, true);
+    board[1][7] = new Knight(1, 7, false);
+    board[6][7] = new Knight(6, 7, false);
+    board[2][0] = new Bishop(2, 0, true);
+    board[5][0] = new Bishop(5, 0, true);
+    board[2][7] = new Bishop(2, 7, false);
+    board[5][7] = new Bishop(5, 7, false);
+    board[3][0] = new Queen(3, 0, true);
+    board[3][7] = new Queen(3, 7, false);
+    board[4][0] = new King(4, 0, true);
+    board[4][7] = new King(4, 7, false);
+
+    for (int c = 0; c < 8; c++)
+    {
+       board[c][1] = new Pawn(c, 1, true); // white pawns
+       board[c][6] = new Pawn(c, 6, false); // black pawns
+    }
+    
+    for (int r = 2; r < 6; r++)
+       for (int c = 0; c < 8; c++)
+          board[c][r] = new Space(c, r);
+    
 }
 
 // we really REALLY need to delete this.
@@ -140,12 +168,35 @@ void Board::move(const Move& move)
    (*this)[source].incrementNMoves();
    (*this)[source].setLastMove(getCurrentMove());
 
-   if (move.getCatpure() != SPACE)
-   {
-      board[dest.getCol()][dest.getRow()] = new Space(dest.getCol(), dest.getRow());
-   }
+    // Capture
+    if (move.getCatpure() != SPACE)
+    {
+       board[dest.getCol()][dest.getRow()] = new Space(dest.getCol(), dest.getRow());
+    }
 
-   std::swap(board[source.getCol()][source.getRow()], board[dest.getCol()][dest.getRow()]);
+    // King-side Castle
+    if ((board[source.getCol()][source.getRow()]->getType() == PieceType::KING) && (move.getMoveType() == Move::MoveType::CASTLE_KING)){
+        std::swap(board[source.getCol() + 3][source.getRow()], board[source.getCol() + 1][source.getRow()]);
+    }
+    
+    // Queen-side Castle
+    if ((board[source.getCol()][source.getRow()]->getType() == PieceType::KING) &&(move.getMoveType() == Move::MoveType::CASTLE_QUEEN))
+       std::swap(board[source.getCol() - 4][source.getRow()], board[source.getCol() - 1][source.getRow()]);
+
+    
+    // Pawn promition
+    if ((board[source.getCol()][source.getRow()]->getType() == PieceType::PAWN) && (dest.getRow() == 0 || dest.getRow() == 7))
+    {
+       board[source.getCol()][source.getRow()] = new Queen(source.getCol(), source.getRow());
+    }
+    
+    // En Passant
+    if (move.getMoveType() == Move::MoveType::ENPASSANT)
+    {
+       board[dest.getCol()][dest.getRow() - 1] = new Space(dest.getCol(), dest.getRow());
+    }
+
+    std::swap(board[source.getCol()][source.getRow()], board[dest.getCol()][dest.getRow()]);
 }
 
 /**********************************************
