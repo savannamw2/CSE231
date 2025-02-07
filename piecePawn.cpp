@@ -2,164 +2,161 @@
  * Source File:
  *    PAWN
  * Author:
- *    <your name here>
+ *    Savanna & Isabel 
  * Summary:
  *    The Pawn class
  ************************************************************************/
 
-#include "piecePawn.h"
 #include "board.h"
-#include "uiDraw.h"    // for draw*()
+#include "move.h"
+#include "piecePawn.h"
+#include "pieceType.h"
+#include "position.h"
+#include "uiDraw.h"
+#include <set>
 
- /***************************************************
- * PIECE DRAW
- * Draw all the pieces.
+ /**********************************************
+  * PAWN : GET POSITIONS
+  *********************************************/
+void Pawn::getMoves(set<Move>& moves, const Board& board) const
+{
+   int row = position.getRow();
+   int col = position.getCol();
+   int r, c;
+   Position newPos;
+
+   if (!fWhite)
+   {
+      c = col;
+      r = row - 2;
+      newPos.set(c, r);
+      if (row == 6 && board[newPos].getType() == PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      r = row - 1;
+      newPos.set(c, r);
+      if (r >= 1 && board[newPos].getType() == PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col - 1;
+      newPos.set(c, r);
+      if (r >= 1 && board[newPos].isWhite() && board[newPos].getType() != PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col + 1;
+      newPos.set(c, r);
+      if (r >= 1 && board[newPos].isWhite() && board[newPos].getType() != PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+
+      // Black En Passant
+      c = col - 1;
+      r = row;
+      newPos.set(c, r);
+      if ((c >= 0) &&
+          (r == 3) &&
+          (board[newPos].getType() == PieceType::PAWN) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getLastMove() == board.getCurrentMove() - 1))
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col + 1;
+      r = row;
+      newPos.set(c, r);
+      if ((c <  8) &&
+          (r == 3) &&
+          (board[newPos].getType() == PieceType::PAWN) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getLastMove() == board.getCurrentMove() - 1))
+          moves.insert(Move(position, Position(c, r - 1), PieceType::INVALID, board[Position(c, r - 1)].getType(), Move::MoveType::ENPASSANT, isWhite()));
+
+      // Black Promote
+      c = col;
+      r = row - 1;
+      newPos.set(c, r);
+      if (r == 0 &&
+          board[newPos].getType() == PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::QUEEN, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col - 1;
+      newPos.set(c, r);
+      if ((c >= 0) &&
+          (r == 0) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getType() != PieceType::SPACE))
+          moves.insert(Move(position, newPos, PieceType::QUEEN, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col + 1;
+      newPos.set(c, r);
+      if ((c < 8) &&
+          (r == 0) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getType() != PieceType::SPACE))
+          moves.insert(Move(position, newPos, PieceType::QUEEN, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+   }
+   if (fWhite)
+   {
+      c = col;
+      r = row + 2;
+      newPos.set(c, r);
+      if (row == 1 && board[newPos].getType() == PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      r = row + 1;
+      newPos.set(c, r);
+      if (r < 7 && board[newPos].getType() == PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col - 1;
+      newPos.set(c, r);
+      if (r < 7 && !board[newPos].isWhite() && board[newPos].getType() != PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col + 1;
+      newPos.set(c, r);
+      if (r < 7 && !board[newPos].isWhite() && board[newPos].getType() != PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+
+      // En Passant
+      c = col - 1;
+      r = row;
+      newPos.set(c, r);
+      if ((c >= 0) &&
+          (r == 4) &&
+          (board[newPos].getType() == PieceType::PAWN) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getLastMove() == board.getCurrentMove() - 1))
+          moves.insert(Move(position, Position(c, r+1), PieceType::INVALID, board[Position(c, r+1)].getType(), Move::MoveType::ENPASSANT, isWhite()));
+      c = col + 1;
+      r = row;
+      newPos.set(c, r);
+      if ((c <  8) &&
+          (r == 4) &&
+          (board[newPos].getType() == PieceType::PAWN) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getLastMove() == board.getCurrentMove() - 1))
+          moves.insert(Move(position, newPos, PieceType::INVALID, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+
+      // White Promote
+      c = col;
+      r = row + 1;
+      newPos.set(c, r);
+      if (r == 7 &&
+          board[newPos].getType() == PieceType::SPACE)
+          moves.insert(Move(position, newPos, PieceType::QUEEN, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col - 1;
+      newPos.set(c, r);
+      if ((c >= 0) &&
+          (r == 7) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getType() != PieceType::SPACE))
+          moves.insert(Move(position, newPos, PieceType::QUEEN, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+      c = col + 1;
+      newPos.set(c, r);
+      if ((c < 8) &&
+          (r == 7) &&
+          (board[newPos].isWhite() != fWhite) &&
+          (board[newPos].getType() != PieceType::SPACE))
+          moves.insert(Move(position, newPos, PieceType::QUEEN, board[newPos].getType(), Move::MoveType::MOVE, isWhite()));
+   }
+}
+
+/***************************************************
+ * PAWN : DRAW
+ * Draw the pawn.
  ***************************************************/
 void Pawn::display(ogstream* pgout) const
 {
-    pgout->drawPawn(position, fWhite);
+   pgout->drawPawn(position, !fWhite);
 }
 
-
-/**********************************************
- * KNIGHT : GET POSITIONS
- *********************************************/
-void Pawn::getMoves(set <Move>& moves, const Board& board) const
-{
-    Position pos;
-    int row = position.getRow();
-    int col = position.getCol();
-    int r, c;
-    
-    if(fWhite){
-        c = col;
-        //Move one space
-       r = row + 1;
-        pos.set(c, r);
-        if(row < 7 && board[pos].getType() == PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //move 2 space
-        r = row +2;
-        pos.set(c, r);
-        if(row == 1 && board[pos].getType() == PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //Attacking right?
-        r = row;
-        c = col + 1;
-        pos.set(c, r);
-        if (r < 7 && !board[pos].isWhite() && board[pos].getType() != PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //attacking left
-        r = row;
-        c = col - 1;
-        pos.set(c, r);
-        if (r < 7 && !board[pos].isWhite() && board[pos].getType() != PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //promote going straight
-        r = row + 1;
-        c = col;
-        pos.set(c, r);
-        if (r == 7 && board[pos].getType() == PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::QUEEN, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        //
-        c = col - 1;
-        pos.set(c, r);
-        if ((c >= 0) && (r == 7) && (board[pos].isWhite() != fWhite) && (board[pos].getType() != PieceType::SPACE)) {
-            moves.insert(Move(position, pos, PieceType::QUEEN, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        c = col + 1;
-        pos.set(c, r);
-        if ((c < 8) && (r == 7) && (board[pos].isWhite() != fWhite) && (board[pos].getType() != PieceType::SPACE)){
-            moves.insert(Move(position, pos, PieceType::QUEEN, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        
-        //Enpasant
-        c = col - 1;
-        r = row;
-        pos.set(c, r);
-        if(col >= 0 && row == 4 && board[pos].getType() == PieceType ::PAWN && board[pos].getLastMove() == board.getCurrentMove() - 1 && (board[pos].isWhite() != fWhite)){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType:: ENPASSANT, isWhite()));
-        }
-        c = col + 1;
-        pos.set(c, r);
-        if(col < 8 && row == 4 && board[pos].getType() == PieceType ::PAWN && board[pos].getLastMove() == board.getCurrentMove() - 1 && (board[pos].isWhite() != fWhite)){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType:: ENPASSANT, isWhite()));
-        }
-    }
-    
-    if(!fWhite){
-        c = col;
-        
-        //Move one space
-        r = row - 1;
-        pos.set(c, r);
-        if(row < 7 && board[pos].getType() == PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //move 2 space
-        r = row - 2;
-        pos.set(c, r);
-        if(row == 6 && board[pos].getType() == PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //Attacking right?
-        c = col + 1;
-        pos.set(c, r);
-        if(r < 7 && !board[pos].isWhite() && board[pos].getType() != PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        //attacking left
-        c = col - 1;
-        pos.set(c, r);
-        if(r < 1 && board[pos].isWhite() && board[pos].getType() != PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        
-        
-        //PROMOTE
-        r = row - 1;
-        c = col;
-        pos.set(c, r);
-        if (r == 0 && board[pos].getType() == PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::QUEEN, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        c = col - 1;
-        pos.set(c, r);
-        if ((c >= 0) && (r == 0) && (board[pos].isWhite() != fWhite) && board[pos].getType() != PieceType::SPACE){
-            moves.insert(Move(position, pos, PieceType::QUEEN, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        c = col + 1;
-        pos.set(r, c);
-        if ((c < 8) && (r == 0) && (board[pos].isWhite() != fWhite) && (board[pos].getType() != PieceType::SPACE)){
-            moves.insert(Move(position, pos, PieceType::QUEEN, board[pos].getType(), Move::MoveType::MOVE, isWhite()));
-        }
-        
-        
-        //ENPASSANT
-        c = col - 1;
-        r = row;
-        pos.set(c, r);
-        if(col >= 0 && row == 3 && board[pos].getType() == PieceType ::PAWN && board[pos].getLastMove() == board.getCurrentMove() - 1 && (board[pos].isWhite() != fWhite)){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType:: ENPASSANT, isWhite()));
-        }
-        c = col + 1;
-        pos.set(c, r);
-        if(col < 8 && row == 3 && board[pos].getType() == PieceType ::PAWN && board[pos].getLastMove() == board.getCurrentMove() - 1 && (board[pos].isWhite() != fWhite)){
-            moves.insert(Move(position, pos, PieceType::INVALID, board[pos].getType(), Move::MoveType:: ENPASSANT, isWhite()));
-        }
-    }
-}

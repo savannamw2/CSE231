@@ -8,10 +8,10 @@
  ************************************************************************/
 
 #include "testPawn.h"
-#include "piecePawn.h"     
+#include "piecePawn.h"
 #include "board.h"
 #include "uiDraw.h"
-#include <cassert>      
+#include <cassert>
 
 
 
@@ -249,19 +249,23 @@ void TestPawn::getMoves_captureWhite()
 void TestPawn::getMoves_captureBlack()
 {
     // SETUP
-       BoardEmpty board;
-       Pawn pawn(7, 7, false /*fWhite*/);
-       pawn.position.set(1, 5);
-       pawn.fWhite = false;
-       pawn.nMoves = 1;
-       board.board[1][5] = &pawn;
-       White white1(PAWN);
-       board.board[0][4] = &white1;
-       White white2(PAWN);
-       board.board[1][4] = &white2;
-       White white3(PAWN);
-       board.board[2][4] = &white3;
-       set <Move> moves;
+    BoardEmpty board;
+    Pawn pawn(7, 7, false);
+    pawn.position.set(1, 5);
+    pawn.fWhite = false;
+    pawn.nMoves = 1;
+    board.board[1][5] = &pawn;
+       
+    White white1(PAWN);
+    board.board[0][4] = &white1;
+       
+    White white2(PAWN);
+    board.board[1][4] = &white2;
+       
+    White white3(PAWN);
+    board.board[2][4] = &white3;
+       
+    set <Move> moves;
        
 
        // EXERCISE
@@ -389,7 +393,7 @@ void TestPawn::getMoves_enpassantBlack()
 
 /*************************************
  * GET MOVES TEST Promotion
- * Promotion: white pawn b7 can capture two pawns: a8 and c8. 
+ * Promotion: white pawn b7 can capture two pawns: a8 and c8.
  *            It can also move into b8. All three are promoted to queen
  *
  * +---a-b-c-d-e-f-g-h---+
@@ -408,30 +412,31 @@ void TestPawn::getMoves_enpassantBlack()
 void TestPawn::getMoves_promotionWhite()
 {
     // SETUP
-       BoardEmpty board;
-       Pawn whitePawn(7, 7, false /*fWhite*/);
-       whitePawn.fWhite = true;
-       whitePawn.position.set(1, 6);
-       Black blackUpLeft(PAWN);
-       Black blackUpRight(PAWN);
-       board.board[1][6] = &whitePawn;
-       board.board[0][7] = &blackUpLeft;
-       board.board[2][7] = &blackUpRight;
-       set<Move> moves;
+    BoardEmpty board;
+    Pawn whitePawn(7, 7, false /*fWhite*/);
+    whitePawn.fWhite = true;
+    whitePawn.position.set(1, 6);
+       
+    Black blackUpLeft(PAWN);
+    Black blackUpRight(PAWN);
+    board.board[1][6] = &whitePawn;
+    board.board[0][7] = &blackUpLeft;
+    board.board[2][7] = &blackUpRight;
+    set<Move> moves;
 
        // EXERCISE
-       whitePawn.getMoves(moves, board);
+    whitePawn.getMoves(moves, board);
 
        // VERIFY
-       assertUnit(moves.size() == 3);
-       assertUnit(moves.find(Move("b7b8Q")) != moves.end());
-       assertUnit(moves.find(Move("b7a8pQ")) != moves.end());
-       assertUnit(moves.find(Move("b7c8pQ")) != moves.end());
+    assertUnit(moves.size() == 3);
+    assertUnit(moves.find(Move("b7b8Q")) != moves.end());
+    assertUnit(moves.find(Move("b7a8pQ")) != moves.end());
+    assertUnit(moves.find(Move("b7c8pQ")) != moves.end());
 
        // TEARDOWN
-       board.board[1][6] = nullptr; // whitePawn
-       board.board[0][7] = nullptr; // blackUpLeft
-       board.board[2][7] = nullptr; // blackUpRight
+    board.board[1][6] = nullptr; // whitePawn
+    board.board[0][7] = nullptr; // blackUpLeft
+    board.board[2][7] = nullptr; // blackUpRight
 }
 
 
@@ -457,14 +462,19 @@ void TestPawn::getMoves_promotionBlack()
 {
     // SETUP
     BoardEmpty board;
-    Pawn blackPawn(7, 7, true /*fWhite*/);
+    Pawn blackPawn(7, 7, true);
     blackPawn.fWhite = false;
     blackPawn.position.set(4, 1);
+    
+    
     White whiteLowLeft(ROOK);
     White whiteLowRight(ROOK);
+    
+    
     board.board[4][1] = &blackPawn;
     board.board[3][0] = &whiteLowLeft;
     board.board[5][0] = &whiteLowRight;
+    
     set<Move> moves;
 
     // EXERCISE
@@ -492,4 +502,3 @@ void TestPawn::getType()
 {
    assertUnit(NOT_YET_IMPLEMENTED);
 }
-
