@@ -25,5 +25,3 @@ public:
    void getMoves(set <Move>& moves, const Board& board) const override;
    void display(ogstream* pgout) const override;
 };
-
-
