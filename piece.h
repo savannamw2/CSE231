@@ -70,7 +70,7 @@ public:
 
    // setter
    virtual void setLastMove(int currentMove);
-    virtual int getLastMove()  const  {return lastMove;};
+    virtual int getLastMove()  const  {return lastMove;}
    // overwritten by the various pieces
    virtual PieceType getType()                                    const = 0;
    virtual void display(ogstream * pgout)                         const = 0;
@@ -219,6 +219,18 @@ public:
    void getMoves(set <Move>& moves, const Board& board) const { }
 };
 
+class WhiteMoved : public PieceDummy
+{
+   PieceType pt;
+public:
+   WhiteMoved() : PieceDummy(), pt(ROOK) {}
+   WhiteMoved(PieceType pt) : PieceDummy(), pt(pt) {}
+   bool isWhite() const { return true; }
+   PieceType getType() const { return pt; }
+   int getNMoves() const { return 1; }
+   void getMoves(set <Move>& moves, const Board& board) const { }
+};
+
 /***************************************************
  * WHITE PIECE NOT MOVED
  * Generic piece whose only allowable property is the color
@@ -240,6 +252,8 @@ public:
    void getMoves(set <Move>& moves, const Board& board) const { }
 };
 
+
+
 class Black : public PieceDummy
 {
    PieceType pt;
@@ -248,5 +262,17 @@ public:
    Black(PieceType pt) : PieceDummy(), pt(pt) {}
    bool isWhite() const { return false; }
    PieceType getType() const { return pt; }
+   void getMoves(set <Move>& moves, const Board& board) const { }
+};
+
+class BlackNotMoved : public PieceDummy
+{
+   PieceType pt;
+public:
+   BlackNotMoved() : PieceDummy(), pt(ROOK) {}
+   BlackNotMoved(PieceType pt) : PieceDummy(), pt(pt) {}
+   bool isWhite() const { return false; }
+   PieceType getType() const { return pt; }
+   int getNMoves() const { return 0; }
    void getMoves(set <Move>& moves, const Board& board) const { }
 };
